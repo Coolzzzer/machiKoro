@@ -8,10 +8,22 @@ let size = 1.6;
 let moneyOne = 3;
 let moneyTwo = 3;
 let newFace;
+let newFace2;
 let move = 1;
 let currentFace = 1;
+let currentFace2 = 1;
 const game = document.createElement("div");
 const exit = document.createElement("button");
+const cube1 = document.createElement("div");
+const cube2 = document.createElement("div");
+const rotations = {
+	1: 'rotateX(0deg) rotateY(0deg)',
+	2: 'rotateX(0deg) rotateY(-90deg)',
+	3: 'rotateX(0deg) rotateY(-180deg)',
+	4: 'rotateX(0deg) rotateY(90deg)',
+	5: 'rotateX(-90deg) rotateY(0deg)',
+	6: 'rotateX(90deg) rotateY(0deg)'
+};
 const cards = [
 	{},
 	{	name:"Пшеница",price:1,src: "1.JPG",type:2,value:1,view:"колос"},
@@ -41,11 +53,13 @@ function isMobileDevice() {
 }
 let playerOne = {name: "player1",money:300,
 	startCard1:0,startCard2:0,startCard3:0,startCard4:0,
-
+	"1":0,"2":0,"2-3":0,"3":0,"4":0,"5":0,"6.1":0,
+	"6.2":0,"7":0,"8":0,"9":0,"9-10":0,"10":0,"11-12":0
 }
 let playerTwo = {name: "player2",money:200,
 	startCard1:0,startCard2:0,startCard3:0,startCard4:0,
-
+	"1":0,"2":0,"2-3":0,"3":0,"4":0,"5":0,"6.1":0,
+	"6.2":0,"7":0,"8":0,"9":0,"9-10":0,"10":0,"11-12":0
 }
 
 
@@ -99,15 +113,17 @@ display.appendChild(game);
 menu.appendChild(start);
 game.style.display = "none";
 exit.style.display = "none";
-start.innerHTML = "start";
-exit.innerHTML = "exit";
+start.innerHTML = "Начать";
+exit.innerHTML = "Выход";
 display.appendChild(exit);
 
 function startGame(){
 	menu.style.display = "none";
 	game.style.display = "block"
 	exit.style.display = "block";
-	buldGameField()
+	buldGameField();
+	playerTwoRoll.style.display = "none";
+	playerOneRoll.style.display = "none";
 }
 function exitGame(){
 	menu.style.display = "block";
@@ -118,6 +134,21 @@ function buldGameField(){
 	let posX =  width/25;
 	let posY =  height/25;
 	let posOverlay = 2;
+
+	let diceLeft = 0.8;
+	let idDice = "1";
+	createDice(cube1);
+	
+	for (let i = 1;i<=cards.length-1;i++){
+		for (let j = 1;j<=5;j++){
+			addCards(cards, i);
+		}
+		posX+= width/11;
+		if(i % 7 === 0){
+			posY+= width/12;
+			posX = width/25;
+		}
+	}
 	function addCards(cards,i){
 		const img = document.createElement('img');
 			img.setAttribute("src",cards[i].src);
@@ -152,23 +183,31 @@ function buldGameField(){
 			function transitionMove(event){
 				event = event || window.event;
 				const playerOneRoll = document.querySelector(`#playerOneRoll`)
-				const playerTwoRoll = document.querySelector(`#playerTwoRoll`)
+				const playerTwoRoll = document.querySelector(`#playerTwoRoll`);
+				playerTwoRoll.addEventListener("mouseup", rollDice);
+				playerOneRoll.addEventListener("mouseup", rollDice);
+
+				if(playerOne.startCard1 == 1){
+					playerOneRoll.addEventListener("mouseup", rollDice2);
+					playerOneRoll.addEventListener("touchend ", rollDice2);
+				}else if(playerTwo.startCard1 == 1){
+					playerTwoRoll.addEventListener("mouseup", rollDice2);
+					playerTwoRoll.addEventListener("touchend ", rollDice2);
+				}
 				if(move == 1){
 
 					const moneyCountOne = document.querySelector('#moneyCountOne');
 					clickCard(playerOne,moneyCountOne)
 					move++;
 					alert(`Ход ${playerTwo.name}`);
-					playerTwoRoll.addEventListener('click', rollDice);
-					playerOneRoll.removeEventListener('click', rollDice);
+					removeRollDice(playerTwoRoll,playerOneRoll)
 				}else if(move == 2){
 
 					const moneyCountTwo = document.querySelector('#moneyCountTwo');
 					clickCard(playerTwo,moneyCountTwo)
 					move--;
 					alert(`Ход ${playerOne.name}`)
-					playerOneRoll.addEventListener('click', rollDice);
-					playerTwoRoll.removeEventListener('click', rollDice);
+					removeRollDice(playerOneRoll,playerTwoRoll)
 				}
 
 				function clickCard(player,moneyCount){
@@ -184,9 +223,10 @@ function buldGameField(){
 								player.startCard4 = 1;
 							}
 							player.money -= startCards[i].price;
-							moneyCount.innerHTML = `Name: ${player.name} - Money: ${player.money}`;
+							moneyCount.innerHTML = `Имя: ${player.name} - Денег: ${player.money}`;
 							img.setAttribute("src",startCards[i].srcBuy);
-							img.removeEventListener("click", transitionMove)
+							img.removeEventListener("mouseup", transitionMove)
+							img.removeEventListener("touchend ", transitionMove)
 						}else{
 							alert("no money")
 						}
@@ -194,27 +234,28 @@ function buldGameField(){
 						console.log(cards[i])
 					}
 				}
-				function rollDice(event) {
-					event = event || window.event;
-					newFace = Math.floor(Math.random() * 6) + 1;
-			
-					const rotations = {
-							1: 'rotateX(0deg) rotateY(0deg)',
-							2: 'rotateX(0deg) rotateY(-90deg)',
-							3: 'rotateX(0deg) rotateY(-180deg)',
-							4: 'rotateX(0deg) rotateY(90deg)',
-							5: 'rotateX(-90deg) rotateY(0deg)',
-							6: 'rotateX(90deg) rotateY(0deg)'
-					};
-			
-					cube.style.transform = rotations[newFace];
-			
+				function removeRollDice(player1, player2){
+					player1.style.display = "block";
+					player2.style.display = "none";
+				}
+				function rollDice() {
+					newFace = Math.floor(Math.random() * 6) + 1;			
+					cube1.style.transform = rotations[newFace];
 					setTimeout(() => {
-							cube.style.transform = rotations[newFace];
+							cube1.style.transform = rotations[newFace];
 							currentFace = newFace;
 					}, 1000);
 					return newFace;
-			}
+				}
+				function rollDice2() {
+					newFace2 = Math.floor(Math.random() * 6) + 1;		
+					cube2.style.transform = rotations[newFace2];
+					setTimeout(() => {
+							cube2.style.transform = rotations[newFace2];
+							currentFace2 = newFace2;
+					}, 1000);
+					return newFace2;
+				}
 
 				///     WinСondition     
 
@@ -231,6 +272,10 @@ function buldGameField(){
 					const win2 = createWinСondition(player.startCard2,2);
 					const win3 = createWinСondition(player.startCard3,3);
 					const win4 = createWinСondition(player.startCard4,4);
+					win1
+					.then(result =>{
+						createDice(cube2)
+					})
 					Promise.all([win1,win2,win3,win4])
 					.then(result => {
 						alert(player.name + " win!!!")
@@ -239,15 +284,23 @@ function buldGameField(){
 				createPromiseAll(playerOne);
 				createPromiseAll(playerTwo);
 			}
-			img.addEventListener("mouseover",mouseOver)
-			img.addEventListener("mouseout",mouseOut)
-			img.addEventListener("mousedown",mouseDown)
-			img.addEventListener("click", transitionMove)
+			if(!isMobileDevice){
+				img.addEventListener("touchstart",mouseOver)
+				img.addEventListener("touchend",mouseOut)
+				img.addEventListener("touchstart",mouseDown)
+				img.addEventListener("dblclick", transitionMove)
+			}else{
+				img.addEventListener("mouseover",mouseOver)
+				img.addEventListener("mouseout",mouseOut)
+				img.addEventListener("mousedown",mouseDown)
+				img.addEventListener("click", transitionMove)
+			}
+			
 	}
-	function craeteDice(){
+	function createDice(cube){
 		const dice = document.createElement("div");
 		dice.style.position = "absolute";
-		dice.style.left = width*0.9 + "px";
+		dice.style.left = width*diceLeft + "px";
 		dice.style.top = height*0.1 + "px";
 		dice.setAttribute("class", "dice");
 		dice.setAttribute("id", "dice");
@@ -257,8 +310,8 @@ function buldGameField(){
 		dice.style.display = "flex";
 		dice.style.justifyContent = "center";
 		dice.style.alignItems = "center";
-		const cube = document.createElement("div");
-		cube.setAttribute("id", "cube");
+		
+		cube.setAttribute("id", `cube${idDice}`);
 		cube.setAttribute("class", "cube");
 		for(let i = 1; i<=6;i++){
 			const face = document.createElement("div");
@@ -292,19 +345,8 @@ function buldGameField(){
 		}
 		dice.appendChild(cube)
 		game.appendChild(dice)
-	}
-	craeteDice();
-	
-
-	for (let i = 1;i<=cards.length-1;i++){
-		for (let j = 1;j<=5;j++){
-			addCards(cards, i);
-		}
-		posX+= width/10;
-		if(i % 7 === 0){
-			posY+= width/14;
-			posX = width/25;
-		}
+		diceLeft=0.9;
+		idDice = "2"
 	}
 function createPlayerField(posX,player,moneyCountId,playerRoll){
 	const playerField = document.createElement("div");
@@ -314,7 +356,7 @@ function createPlayerField(posX,player,moneyCountId,playerRoll){
 
 	playerField.setAttribute("id", "playerFieldOne")
 	moneyCount.setAttribute("id", `${moneyCountId}`);
-	moneyCount.innerHTML = `Name: ${player.name} - Money: ${player.money}`;
+	moneyCount.innerHTML = `Имя: ${player.name} - Количество монет: ${player.money}`;
 	playerField.style.position = "absolute"
 	playerField.style.width = width/2.3 +"px";
 	playerField.style.height = height - height/3 +"px";
@@ -322,15 +364,15 @@ function createPlayerField(posX,player,moneyCountId,playerRoll){
 	playerField.style.left = posX +"px";
 	playerField.style.background = "#FFE4B5";
 	roll.style.position = "absolute"
-	roll.innerHTML = "roll";
+	roll.innerHTML = "Бросок кубика";
 	
 	
 	game.appendChild(playerField);
 	playerField.appendChild(moneyCount);
 	playerField.appendChild(roll)
 	for (let i = 0;i<=startCards.length-1;i++){
-		posOverlay = width/13;
-		posY = height/2.5
+		posOverlay = width/14;
+		posY = height/2.4
 		addCards(startCards,i);
 	}
 }
@@ -341,4 +383,3 @@ createPlayerField(25 + width/2.1,playerTwo,"moneyCountTwo","playerTwoRoll");
 
 start.addEventListener("click", startGame);
 exit.addEventListener("click", exitGame);
- 
