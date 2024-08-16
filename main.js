@@ -228,8 +228,7 @@ function buldGameField(){
 							player.money -= startCards[i].price;
 							moneyCount.innerHTML = `Имя: ${player.name} - Денег: ${player.money}`;
 							img.setAttribute("src",startCards[i].srcBuy);
-							img.removeEventListener("mouseup", transitionMove)
-							img.removeEventListener("touchend ", transitionMove)
+							img.removeEventListener("click", transitionMove)
 						}else{
 							alert("no money")
 						}
@@ -245,8 +244,6 @@ function buldGameField(){
 				function removeRollDice(player1, player2){
 					player1.style.display = "block";
 					player2.style.display = "none";
-					skip1.style.display = "block";
-					skip2.style.display = "none";
 				}
 				function rollDice() {
 					newFace = Math.floor(Math.random() * 6) + 1;			
