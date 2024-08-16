@@ -26,26 +26,27 @@ const rotations = {
 };
 const cards = [
 	{},
-	{	name:"Пшеница",price:1,src: "1.JPG",type:2,value:1,view:"колос"},
-	{	name:"Ферма",price:1,src: "2.JPG",type:2,value:1,view:"корова"},
-	{	name:"Пекарня",price:1,src: "2-3.JPG",type:1,value:1,view:"магазин"},
-	{	name:"Кафе",price:2,src: "3.JPG",type:3,value:1,view:"чаша"},
-	{	name:"Магазин",price:2,src: "4.JPG",type:1,value:3,view:"магазин"},
-	{	name:"Лес",price:3,src: "5.JPG",type:2,value:1,view:"шестеренка"},
-	{	name:"Стадион",price:6,src: "6-стадион.JPG",type:4,value:2,view:"башня"},
-	{	name:"Телестанция",price:7,src: "6-телестанция.JPG",type:4,value:5,view:"башня"},
-	{	name:"Сырзавод",price:5,src: "7.JPG",type:1,value:3,view:"завод"},
-	{	name:"Мебель",price:3,src: "8.JPG",type:1,value:3,view:"завод"},
-	{	name:"Шахта",price:6,src: "9.JPG",type:2,value:5,view:"шестеренка"},
-	{	name:"Ресторан",price:3,src: "9-10.JPG",type:3,value:2,view:"чаша"},
-	{	name:"Яблони",price:3,src: "10.JPG",type:2,value:3,view:"колос"},
-	{	name:"Овощебаза",price:2,src: "11-12.JPG",type:1,value:2,view:"яблоко"}
+	{	name:"Пшеница",price:1,src: "https://coolzzzer.github.io/machiKoro/1.jpg",type:2,value:1,view:"колос"},
+	{	name:"Ферма",price:1,src: "https://coolzzzer.github.io/machiKoro/2.jpg",type:2,value:1,view:"корова"},
+	{	name:"Пекарня",price:1,src: "https://coolzzzer.github.io/machiKoro/2-3.jpg",type:1,value:1,view:"магазин"},
+	{	name:"Кафе",price:2,src: "https://coolzzzer.github.io/machiKoro/3.jpg",type:3,value:1,view:"чаша"},
+	{	name:"Магазин",price:2,src: "https://coolzzzer.github.io/machiKoro/4.jpg",type:1,value:3,view:"магазин"},
+	{	name:"Лес",price:3,src: "https://coolzzzer.github.io/machiKoro/5.jpg",type:2,value:1,view:"шестеренка"},
+	{	name:"Стадион",price:6,src: "https://coolzzzer.github.io/machiKoro/6-стадион.jpg",type:4,value:2,view:"башня"},
+	{	name:"Телестанция",price:7,src: "https://coolzzzer.github.io/machiKoro/6-телестанция.jpg",type:4,value:5,view:"башня"},
+	{	name:"Сырзавод",price:5,src: "https://coolzzzer.github.io/machiKoro/7.jpg",type:1,value:3,view:"завод"},
+	{	name:"Мебель",price:3,src: "https://coolzzzer.github.io/machiKoro/8.jpg",type:1,value:3,view:"завод"},
+	{	name:"Шахта",price:6,src: "https://coolzzzer.github.io/machiKoro/9.jpg",type:2,value:5,view:"шестеренка"},
+	{	name:"Ресторан",price:3,src: "https://coolzzzer.github.io/machiKoro/9-10.jpg",type:3,value:2,view:"чаша"},
+	{	name:"Яблони",price:3,src: "https://coolzzzer.github.io/machiKoro/10.jpg",type:2,value:3,view:"колос"},
+	{	name:"Овощебаза",price:2,src: "https://coolzzzer.github.io/machiKoro/11-12.jpg",type:1,value:2,view:"яблоко"}
 ];
 const startCards = [
-	{	name:"вокзал",price:4,src: "вокзал-.JPG",type:0,srcBuy: "вокзал.JPG"},
-	{	name:"супер",price:10,src: "супер-.JPG",type:0,srcBuy: "супер.JPG"},
-	{	name:"парк",price:16,src: "парк-.JPG",type:0,srcBuy: "парк.JPG"},
-	{	name:"радио",price:22,src: "радио-.JPG",type:0,srcBuy: "радио.JPG"},
+	{	name:"вокзал",price:4,src: "https://coolzzzer.github.io/machiKoro/вокзал-.jpg",type:0,srcBuy: "https://coolzzzer.github.io/machiKoro/вокзал.jpg"},
+	{	name:"супер",price:10,src: "https://coolzzzer.github.io/machiKoro/супер-.jpg",type:0,srcBuy: "https://coolzzzer.github.io/machiKoro/супер.jpg"},
+	{	name:"парк",price:16,src: "https://coolzzzer.github.io/machiKoro/парк-.jpg",type:0,srcBuy: "https://coolzzzer.github.io/machiKoro/парк.jpg"},
+	{	name:"радио",price:22,src: "https://coolzzzer.github.io/machiKoro/радио-.jpg",type:0,srcBuy: "https://coolzzzer.github.io/machiKoro/радио.jpg"},
+	{	name: "Пропуск",price:0, type: 4, src:"https://coolzzzer.github.io/machiKoro/пропуск.png"}
 ]
 const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
 function isMobileDevice() {
@@ -149,12 +150,13 @@ function buldGameField(){
 			posX = width/25;
 		}
 	}
-	function addCards(cards,i){
+	function addCards(cards,i,id="img"){
 		const img = document.createElement('img');
 			img.setAttribute("src",cards[i].src);
 			img.setAttribute("name",cards[i].name)
-			img.style.width = width/18 + "px";
-			img.style.height = width/15 + "px";
+			img.setAttribute("id",id)
+			img.style.width = width/17 + "px";
+			img.style.height = width/13 + "px";
 			img.style.borderRadius = width/150 + "px";
 			img.style.position = "absolute";
 			img.style.left = posX + "px";
@@ -166,14 +168,16 @@ function buldGameField(){
 
 			function mouseOver(event){
 				event = event || window.event;
-				img.style.width = width/6 + "px";
-				img.style.height = width/5 + "px";
+				img.style.borderRadius = width/100 + "px";
+				img.style.width = width/5.5 + "px";
+				img.style.height = width/4 + "px";
 				img.style.zIndex = 2;
 			}
 			function mouseOut(event){
 				event = event || window.event;
-				img.style.width = width/18 + "px";
-				img.style.height = width/15 + "px";
+				img.style.borderRadius = width/150 + "px";
+				img.style.width = width/17 + "px";
+				img.style.height = width/13 + "px";
 				img.style.zIndex = 1;
 			}
 			function mouseDown(event){
@@ -184,6 +188,9 @@ function buldGameField(){
 				event = event || window.event;
 				const playerOneRoll = document.querySelector(`#playerOneRoll`)
 				const playerTwoRoll = document.querySelector(`#playerTwoRoll`);
+				const moneyCountOne = document.querySelector('#moneyCountOne');
+				const moneyCountTwo = document.querySelector('#moneyCountTwo');
+
 				playerTwoRoll.addEventListener("mouseup", rollDice);
 				playerOneRoll.addEventListener("mouseup", rollDice);
 
@@ -195,15 +202,11 @@ function buldGameField(){
 					playerTwoRoll.addEventListener("touchend ", rollDice2);
 				}
 				if(move == 1){
-
-					const moneyCountOne = document.querySelector('#moneyCountOne');
-					clickCard(playerOne,moneyCountOne)
+					clickCard(playerOne,moneyCountOne);					
 					move++;
 					alert(`Ход ${playerTwo.name}`);
 					removeRollDice(playerTwoRoll,playerOneRoll)
 				}else if(move == 2){
-
-					const moneyCountTwo = document.querySelector('#moneyCountTwo');
 					clickCard(playerTwo,moneyCountTwo)
 					move--;
 					alert(`Ход ${playerOne.name}`)
@@ -234,13 +237,22 @@ function buldGameField(){
 						console.log(cards[i])
 					}
 				}
+				const skip1 = document.querySelector("#skipIdplayerOneRoll");
+				const skip2 = document.querySelector("#skipIdplayerTwoRoll");
+				skip1.addEventListener("click", removeRollDice);
+				skip2.addEventListener("click", removeRollDice);
+
 				function removeRollDice(player1, player2){
 					player1.style.display = "block";
 					player2.style.display = "none";
+					skip1.style.display = "block";
+					skip2.style.display = "none";
 				}
 				function rollDice() {
 					newFace = Math.floor(Math.random() * 6) + 1;			
 					cube1.style.transform = rotations[newFace];
+					playerOneRoll.style.display = "none";
+					playerTwoRoll.style.display = "none";
 					setTimeout(() => {
 							cube1.style.transform = rotations[newFace];
 							currentFace = newFace;
@@ -250,6 +262,8 @@ function buldGameField(){
 				function rollDice2() {
 					newFace2 = Math.floor(Math.random() * 6) + 1;		
 					cube2.style.transform = rotations[newFace2];
+					playerOneRoll.style.display = "none";
+					playerTwoRoll.style.display = "none";
 					setTimeout(() => {
 							cube2.style.transform = rotations[newFace2];
 							currentFace2 = newFace2;
@@ -290,9 +304,11 @@ function buldGameField(){
 				img.addEventListener("touchstart",mouseDown)
 				img.addEventListener("dblclick", transitionMove)
 			}else{
-				img.addEventListener("mouseover",mouseOver)
-				img.addEventListener("mouseout",mouseOut)
-				img.addEventListener("mousedown",mouseDown)
+				if(img.id == "img"){
+					img.addEventListener("mouseover",mouseOver)
+					img.addEventListener("mouseout",mouseOut)
+					img.addEventListener("mousedown",mouseDown)
+				}
 				img.addEventListener("click", transitionMove)
 			}
 			
@@ -365,15 +381,17 @@ function createPlayerField(posX,player,moneyCountId,playerRoll){
 	playerField.style.background = "#FFE4B5";
 	roll.style.position = "absolute"
 	roll.innerHTML = "Бросок кубика";
-	
-	
 	game.appendChild(playerField);
 	playerField.appendChild(moneyCount);
-	playerField.appendChild(roll)
+	playerField.appendChild(roll);
 	for (let i = 0;i<=startCards.length-1;i++){
 		posOverlay = width/14;
-		posY = height/2.4
-		addCards(startCards,i);
+		posY = height/2.4;
+		if (i == startCards.length-1){
+			addCards(startCards,i,`skipId${playerRoll}`);
+		}else{
+			addCards(startCards,i);
+		}
 	}
 }
 		
