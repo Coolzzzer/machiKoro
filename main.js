@@ -14,26 +14,26 @@ const game = document.createElement("div");
 const exit = document.createElement("button");
 const cards = [
 	{},
-	{	name:"Пшеница",price:1,src: "./1.JPG",type:2,value:1,view:"колос"},
-	{	name:"Ферма",price:1,src: "./2.JPG",type:2,value:1,view:"корова"},
-	{	name:"Пекарня",price:1,src: "./2-3.JPG",type:1,value:1,view:"магазин"},
-	{	name:"Кафе",price:2,src: "./3.JPG",type:3,value:1,view:"чаша"},
-	{	name:"Магазин",price:2,src: "./4.JPG",type:1,value:3,view:"магазин"},
-	{	name:"Лес",price:3,src: "./5.JPG",type:2,value:1,view:"шестеренка"},
-	{	name:"Стадион",price:6,src: "./6-стадион.JPG",type:4,value:2,view:"башня"},
-	{	name:"Телестанция",price:7,src: "./6-телестанция.JPG",type:4,value:5,view:"башня"},
-	{	name:"Сырзавод",price:5,src: "./7.JPG",type:1,value:3,view:"завод"},
-	{	name:"Мебель",price:3,src: "./8.JPG",type:1,value:3,view:"завод"},
-	{	name:"Шахта",price:6,src: "./9.JPG",type:2,value:5,view:"шестеренка"},
-	{	name:"Ресторан",price:3,src: "./9-10.JPG",type:3,value:2,view:"чаша"},
-	{	name:"Яблони",price:3,src: "./10.JPG",type:2,value:3,view:"колос"},
-	{	name:"Овощебаза",price:2,src: "./11-12.JPG",type:1,value:2,view:"яблоко"}
+	{	name:"Пшеница",price:1,src: "1.JPG",type:2,value:1,view:"колос"},
+	{	name:"Ферма",price:1,src: "2.JPG",type:2,value:1,view:"корова"},
+	{	name:"Пекарня",price:1,src: "2-3.JPG",type:1,value:1,view:"магазин"},
+	{	name:"Кафе",price:2,src: "3.JPG",type:3,value:1,view:"чаша"},
+	{	name:"Магазин",price:2,src: "4.JPG",type:1,value:3,view:"магазин"},
+	{	name:"Лес",price:3,src: "5.JPG",type:2,value:1,view:"шестеренка"},
+	{	name:"Стадион",price:6,src: "6-стадион.JPG",type:4,value:2,view:"башня"},
+	{	name:"Телестанция",price:7,src: "6-телестанция.JPG",type:4,value:5,view:"башня"},
+	{	name:"Сырзавод",price:5,src: "7.JPG",type:1,value:3,view:"завод"},
+	{	name:"Мебель",price:3,src: "8.JPG",type:1,value:3,view:"завод"},
+	{	name:"Шахта",price:6,src: "9.JPG",type:2,value:5,view:"шестеренка"},
+	{	name:"Ресторан",price:3,src: "9-10.JPG",type:3,value:2,view:"чаша"},
+	{	name:"Яблони",price:3,src: "10.JPG",type:2,value:3,view:"колос"},
+	{	name:"Овощебаза",price:2,src: "11-12.JPG",type:1,value:2,view:"яблоко"}
 ];
 const startCards = [
-	{	name:"вокзал",price:4,src: "./вокзал-.JPG",type:0,srcBuy: "./вокзал.JPG"},
-	{	name:"супер",price:10,src: "./супер-.JPG",type:0,srcBuy: "./супер.JPG"},
-	{	name:"парк",price:16,src: "./парк-.JPG",type:0,srcBuy: "./парк.JPG"},
-	{	name:"радио",price:22,src: "./радио-.JPG",type:0,srcBuy: "./радио.JPG"},
+	{	name:"вокзал",price:4,src: "вокзал-.JPG",type:0,srcBuy: "вокзал.JPG"},
+	{	name:"супер",price:10,src: "супер-.JPG",type:0,srcBuy: "супер.JPG"},
+	{	name:"парк",price:16,src: "парк-.JPG",type:0,srcBuy: "парк.JPG"},
+	{	name:"радио",price:22,src: "радио-.JPG",type:0,srcBuy: "радио.JPG"},
 ]
 const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
 function isMobileDevice() {
