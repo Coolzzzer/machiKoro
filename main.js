@@ -10,7 +10,6 @@ let moneyTwo = 3;
 let newFace;
 let newFace2;
 let move = 1;
-let error = 1;
 let currentFace = 1;
 let currentFace2 = 1;
 let playerCount = 1;
@@ -246,7 +245,6 @@ function addCards(cards,i,id="img"){
 		function clickCard(player,moneyCount){
 			if(player.money<cards[i].price){
 				alert("недостаточно монет");
-				return error = 1;
 			}else{
 				if(cards[i].type == 0){
 					if(player.money >= startCards[i].price){
@@ -261,7 +259,7 @@ function addCards(cards,i,id="img"){
 						}
 						updateDisplay(startCards)
 						img.setAttribute("src",startCards[i].srcBuy);
-
+						
 					}
 				}else if(cards[i].type == 1){
 					if(player.money >= cards[i].price){
@@ -280,7 +278,6 @@ function addCards(cards,i,id="img"){
 						player.money -= cards[i].price;
 						moneyCount.innerHTML = `Имя: ${player.name} - Количество монет: ${player.money}`;
 						img.removeEventListener("click", transitionMove);
-						return error = 0;
 					}
 					
 				}
@@ -295,7 +292,6 @@ function addCards(cards,i,id="img"){
 				moneyCountTwo.innerHTML = `Имя: ${playerTwo.name} - Количество монет: ${playerTwo.money}`;
 			}
 			img.removeEventListener("click", transitionMove);
-			return error = 0;
 		}
 		function transitionMove(event){
 			event = event || window.event;
@@ -313,21 +309,17 @@ function addCards(cards,i,id="img"){
 				playerTwoRoll.addEventListener("mouseup", rollDice2);
 				playerTwoRoll.addEventListener("touchend ", rollDice2);
 			}	
-			if((clickCard(playerOne,moneyCountOne) == 1)||(clickCard(playerTwo,moneyCountTwo) == 1)){
-			}else{
-				if(move == 1){
-					clickCard(playerOne,moneyCountOne);					
-					move++;
-					alert(`Ход ${playerTwo.name}`);
-					removeRollDice(playerTwoRoll,playerOneRoll)
-				}else if(move == 2){
-					clickCard(playerTwo,moneyCountTwo)
-					move--;
-					alert(`Ход ${playerOne.name}`)
-					removeRollDice(playerOneRoll,playerTwoRoll)
-				}
+			if(move == 1){
+				clickCard(playerOne,moneyCountOne);					
+				move++;
+				alert(`Ход ${playerTwo.name}`);
+				removeRollDice(playerTwoRoll,playerOneRoll)
+			}else if(move == 2){
+				clickCard(playerTwo,moneyCountTwo)
+				move--;
+				alert(`Ход ${playerOne.name}`)
+				removeRollDice(playerOneRoll,playerTwoRoll)
 			}
-
 
 			const skip1 = document.querySelector("#skipIdplayerOneRoll");
 			const skip2 = document.querySelector("#skipIdplayerTwoRoll");
@@ -400,7 +392,6 @@ function addCards(cards,i,id="img"){
 			}
 			img.addEventListener("click", transitionMove)
 		}
-		
 }
 buldField()
 start.addEventListener("click", startGame);
