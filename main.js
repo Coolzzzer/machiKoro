@@ -242,9 +242,11 @@ function addCards(cards,i,id="img"){
 			event = event || window.event;	
 			event.preventDefault();
 		}
-		function clickCard(player,moneyCount){
+		function clickCard(player){
+			const playerOneRoll = document.querySelector(`#playerOneRoll`);
+			const playerTwoRoll = document.querySelector(`#playerTwoRoll`);
 			if(player.money<cards[i].price){
-				alert("недостаточно монет");
+				alert("недостаточно монет");							
 			}else{
 				if(cards[i].type == 0){
 					if(player.money >= startCards[i].price){
@@ -258,8 +260,7 @@ function addCards(cards,i,id="img"){
 							player.startCard4 = 1;
 						}
 						updateDisplay(startCards)
-						img.setAttribute("src",startCards[i].srcBuy);
-						
+						img.setAttribute("src",startCards[i].srcBuy);					
 					}
 				}else if(cards[i].type == 1){
 					if(player.money >= cards[i].price){
@@ -276,14 +277,26 @@ function addCards(cards,i,id="img"){
 							player.a11_12 += 1;
 						}
 						player.money -= cards[i].price;
-						moneyCount.innerHTML = `Имя: ${player.name} - Количество монет: ${player.money}`;
-						img.removeEventListener("click", transitionMove);
+						img.removeEventListener("click", transitionMove);						
 					}
-					
 				}
+				
+				if(move==1){
+					alert(`Ход ${playerTwo.name}`);
+					move++;
+					playerOneRoll.style.display = "none";
+					playerTwoRoll.style.display = "block";
+				}else if(move==2){
+					move--;
+					playerOneRoll.style.display = "block";
+					playerTwoRoll.style.display = "none";
+					alert(`Ход ${playerOne.name}`);
+				}	
 			}
 		}
 		function updateDisplay(cards) {
+			const moneyCountOne = document.querySelector('#moneyCountOne');
+			const moneyCountTwo = document.querySelector('#moneyCountTwo');
 			if(move==1){
 				playerOne.money -= cards[i].price;
 				moneyCountOne.innerHTML = `Имя: ${playerOne.name} - Количество монет: ${playerOne.money}`;
@@ -297,9 +310,6 @@ function addCards(cards,i,id="img"){
 			event = event || window.event;
 			const playerOneRoll = document.querySelector(`#playerOneRoll`);
 			const playerTwoRoll = document.querySelector(`#playerTwoRoll`);
-			const moneyCountOne = document.querySelector('#moneyCountOne');
-			const moneyCountTwo = document.querySelector('#moneyCountTwo');
-
 			playerTwoRoll.addEventListener("mouseup", rollDice);
 			playerOneRoll.addEventListener("mouseup", rollDice);
 			if(playerOne.startCard1 == 1){
@@ -310,25 +320,13 @@ function addCards(cards,i,id="img"){
 				playerTwoRoll.addEventListener("touchend ", rollDice2);
 			}	
 			if(move == 1){
-				clickCard(playerOne,moneyCountOne);					
-				move++;
-				alert(`Ход ${playerTwo.name}`);
-				removeRollDice(playerTwoRoll,playerOneRoll)
+				clickCard(playerOne);					
+				playerOneRoll.style.display = "none";
+				playerTwoRoll.style.display = "block";
 			}else if(move == 2){
-				clickCard(playerTwo,moneyCountTwo)
-				move--;
-				alert(`Ход ${playerOne.name}`)
-				removeRollDice(playerOneRoll,playerTwoRoll)
-			}
-
-			const skip1 = document.querySelector("#skipIdplayerOneRoll");
-			const skip2 = document.querySelector("#skipIdplayerTwoRoll");
-			skip1.addEventListener("click", removeRollDice);
-			skip2.addEventListener("click", removeRollDice);
-
-			function removeRollDice(player1, player2){
-				player1.style.display = "block";
-				player2.style.display = "none";
+				clickCard(playerTwo)
+				playerOneRoll.style.display = "block";
+				playerTwoRoll.style.display = "none";
 			}
 			function rollDice() {
 				newFace = Math.floor(Math.random() * 6) + 1;			
@@ -352,8 +350,6 @@ function addCards(cards,i,id="img"){
 				}, 1000);
 				return newFace2;
 			}
-
-
 			function createPromiseAll(player){
 				function createWinСondition(startCard,result){
 					return new Promise( (resolve,reject) => {
@@ -380,19 +376,15 @@ function addCards(cards,i,id="img"){
 			createPromiseAll(playerTwo);
 		}
 		if(!isMobileDevice){
-			img.addEventListener("touchstart",mouseOver)
-			img.addEventListener("touchend",mouseOut)
-			img.addEventListener("touchstart",mouseDown)
-			img.addEventListener("dblclick", transitionMove)
 		}else{
 			if(img.id == "img"){
 				img.addEventListener("mouseover",mouseOver)
 				img.addEventListener("mouseout",mouseOut)
 				img.addEventListener("mousedown",mouseDown)
 			}
-			img.addEventListener("click", transitionMove)
 		}
-}
+		img.addEventListener("click", transitionMove)
+	}
 buldField()
 start.addEventListener("click", startGame);
 exit.addEventListener("click", exitGame);
