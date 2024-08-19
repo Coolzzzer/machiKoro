@@ -2,6 +2,7 @@
 const display = document.querySelector("#display");
 const menu = document.createElement("div");
 const start = document.createElement("button");
+const startHiddenWindow = document.createElement("div");
 let width = window.innerWidth;
 let height = window.innerHeight;
 let size = 1.6;
@@ -9,7 +10,7 @@ let moneyOne = 3;
 let moneyTwo = 3;
 let newFace;
 let newFace2;
-let move = 1;
+let move = 0;
 let currentFace = 1;
 let currentFace2 = 1;
 let playerCount = 1;
@@ -22,9 +23,11 @@ let idDice = "1";
 let idElem;
 let nameElem;
 let arrayCards;
-
+let posBuyX = height/10;
+let posBuyY = width/8;
+let load = 0;
+let imgAll;
 const game = document.createElement("div");
-const exit = document.createElement("button");
 const cube1 = document.createElement("div");
 const cube2 = document.createElement("div");
 const rotations = {
@@ -35,22 +38,29 @@ const rotations = {
 	5: 'rotateX(-90deg) rotateY(0deg)',
 	6: 'rotateX(90deg) rotateY(0deg)'
 };
+const fieldMarking = {
+	xColumn: width/14,
+	yRow: height/6,
+	yStartPlayer: width/2.7,
+	xStartOnePlayer : width/25,
+	xStartTwoPlayer : width/1.94
+}
 const cards = [
 	{},
-	{	name:"Пшеница",price:1,src: "https://coolzzzer.github.io/machiKoro/1.jpg",type:2,value:1,view:"колос",quantity:5,},
-	{	name:"Ферма",price:1,src: "https://coolzzzer.github.io/machiKoro/2.jpg",type:2,value:1,view:"корова",quantity:5,},
-	{	name:"Пекарня",price:1,src: "https://coolzzzer.github.io/machiKoro/2-3.jpg",type:1,value:1,view:"магазин",quantity:5,},
-	{	name:"Кафе",price:2,src: "https://coolzzzer.github.io/machiKoro/3.jpg",type:3,value:1,view:"чаша",quantity:5,},
-	{	name:"Магазин",price:2,src: "https://coolzzzer.github.io/machiKoro/4.jpg",type:1,value:3,view:"магазин",quantity:5,},
-	{	name:"Лес",price:3,src: "https://coolzzzer.github.io/machiKoro/5.jpg",type:2,value:1,view:"шестеренка",quantity:5,},
-	{	name:"Стадион",price:6,src: "https://coolzzzer.github.io/machiKoro/6-стадион.jpg",type:4,value:2,view:"башня",quantity:5,},
-	{	name:"Телестанция",price:7,src: "https://coolzzzer.github.io/machiKoro/6-телестанция.jpg",type:4,value:5,view:"башня",quantity:5,},
-	{	name:"Сырзавод",price:5,src: "https://coolzzzer.github.io/machiKoro/7.jpg",type:1,value:3,view:"завод",quantity:5,},
-	{	name:"Мебель",price:3,src: "https://coolzzzer.github.io/machiKoro/8.jpg",type:1,value:3,view:"завод",quantity:5,},
-	{	name:"Шахта",price:6,src: "https://coolzzzer.github.io/machiKoro/9.jpg",type:2,value:5,view:"шестеренка",quantity:5,},
-	{	name:"Ресторан",price:3,src: "https://coolzzzer.github.io/machiKoro/9-10.jpg",type:3,value:2,view:"чаша",quantity:5,},
-	{	name:"Яблони",price:3,src: "https://coolzzzer.github.io/machiKoro/10.jpg",type:2,value:3,view:"колос",quantity:5,},
-	{	name:"Овощебаза",price:2,src: "https://coolzzzer.github.io/machiKoro/11-12.jpg",type:1,value:2,view:"яблоко",quantity:5}
+	{	name:"Пшеница",price:1,src: "https://coolzzzer.github.io/machiKoro/1.jpg",type:2,value:1,view:"колос",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Ферма",price:1,src: "https://coolzzzer.github.io/machiKoro/2.jpg",type:2,value:1,view:"корова",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Пекарня",price:1,src: "https://coolzzzer.github.io/machiKoro/2-3.jpg",type:1,value:1,view:"магазин",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Кафе",price:2,src: "https://coolzzzer.github.io/machiKoro/3.jpg",type:3,value:1,view:"чаша",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Магазин",price:2,src: "https://coolzzzer.github.io/machiKoro/4.jpg",type:1,value:3,view:"магазин",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Лес",price:3,src: "https://coolzzzer.github.io/machiKoro/5.jpg",type:2,value:1,view:"шестеренка",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Стадион",price:6,src: "https://coolzzzer.github.io/machiKoro/6-стадион.jpg",type:4,value:2,view:"башня",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Телестанция",price:7,src: "https://coolzzzer.github.io/machiKoro/6-телестанция.jpg",type:4,value:5,view:"башня",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Сырзавод",price:5,src: "https://coolzzzer.github.io/machiKoro/7.jpg",type:1,value:3,view:"завод",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Мебель",price:3,src: "https://coolzzzer.github.io/machiKoro/8.jpg",type:1,value:3,view:"завод",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Шахта",price:6,src: "https://coolzzzer.github.io/machiKoro/9.jpg",type:2,value:5,view:"шестеренка",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Ресторан",price:3,src: "https://coolzzzer.github.io/machiKoro/9-10.jpg",type:3,value:2,view:"чаша",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Яблони",price:3,src: "https://coolzzzer.github.io/machiKoro/10.jpg",type:2,value:3,view:"колос",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Овощебаза",price:2,src: "https://coolzzzer.github.io/machiKoro/11-12.jpg",type:1,value:2,view:"яблоко",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0}
 ];
 const startCards = [
 	{	name:"вокзал",price:4,src: "https://coolzzzer.github.io/machiKoro/вокзал-.jpg",type:0,srcBuy: "https://coolzzzer.github.io/machiKoro/вокзал.jpg"},
@@ -63,15 +73,15 @@ const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
 function isMobileDevice() {
 	return /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
 }
-let playerOne = {name: "player1",money:8,
+let playerOne = {name: "player1",money:8,count: 0,
 	startCard1:0,startCard2:0,startCard3:0,startCard4:0,
 	b1:0,b2:0,a2_3:0,c3:0,a4:0,b5:0,d6_1:0,
-	d6_2:0,a7:0,a8:0,b9:0,c9_10:0,b10:0,a11_12:0
+	d6_2:0,a7:0,a8:0,b9:0,c9_10:0,b10:0,a11_12:0,
 }
-let playerTwo = {name: "player2",money:200,
+let playerTwo = {name: "player2",money:200,count: 0,
 	startCard1:0,startCard2:0,startCard3:0,startCard4:0,
 	b1:0,b2:0,a2_3:0,c3:0,a4:0,b5:0,d6_1:0,
-	d6_2:0,a7:0,a8:0,b9:0,c9_10:0,b10:0,a11_12:0
+	d6_2:0,a7:0,a8:0,b9:0,c9_10:0,b10:0,a11_12:0,
 }
 
 function buldField(){
@@ -90,24 +100,16 @@ function buldField(){
 	display.appendChild(game);
 	menu.appendChild(start);
 	game.style.display = "none";
-	exit.style.display = "none";
 	start.innerHTML = "Начать";
-	exit.innerHTML = "Выход";
-	display.appendChild(exit);
 }
 function startGame(){
 	menu.style.display = "none";
 	game.style.display = "block"
-	exit.style.display = "block";
 	buldGameField();
+	load++;
 	playerTwoRoll.style.display = "none";
 	playerOneRoll.style.display = "none";
-	alert(`Ход ${playerOne.name}`)
-}
-function exitGame(){
-	menu.style.display = "block";
-	game.style.display = "none";
-	exit.style.display = "none";
+	alert(`Ход ${playerOne.name}`);
 }
 function buldGameField(){
 	createDice(cube1);
@@ -123,6 +125,7 @@ function buldGameField(){
 	}	
 createPlayerField(25,playerOne,"moneyCountOne","playerOneRoll","playerOneHiddenField");
 createPlayerField(25 + width/2.1,playerTwo,"moneyCountTwo","playerTwoRoll","playerTwoHiddenField");
+
 }
 function createDice(cube){
 	const dice = document.createElement("div");
@@ -288,7 +291,6 @@ function addCards(cards,i,id="img"){
 					}
 				}else if(cards[i].type == 1){
 					if(player.money >= cards[i].price){
-						console.log(player.money);
 						if(i === 3){
 							player.a2_3 += 1;
 						} else if(i === 5){
@@ -404,13 +406,13 @@ function addCards(cards,i,id="img"){
 				img.addEventListener("mousedown",mouseDown)
 			}
 		}
-		img.addEventListener("click", transitionMove)
+		img.addEventListener("click", transitionMove);
 	}
 buldField();
-// Функция для обработки клика на любом элементе
+
 function showIdOnClick() {
 	document.addEventListener('click', function(event) {
-			const clickedElement = event.target; // Получаем элемент, на который кликнули
+			const clickedElement = event.target;
 			
 			if (clickedElement.id) {idElem
 				idElem = clickedElement.id
@@ -421,76 +423,144 @@ function showIdOnClick() {
 	});
 }
 
-// Запускаем функцию
 showIdOnClick();
-document.addEventListener("click", b);
-function b (){
 
-	function buyCards(player,x,y){
-		function animationCards (i,atr){
+function controllerGame (){
+	if(move == 0){
+		startHiddenWindow.style.display = "none";
+		console.log('g')
+		move++
+	}else{
+	
+	function buyCards(player,xStartPlayer){
+		function animationCards(i,atr){
 			arrayCards = document.getElementsByName(nameElem);
-			if(atr == 0){
-			} else if(atr == 1){
-				x-=5
+			let nextRow = 0;
+			if(cards[i].count == 0){
+				if(player.count == 0){
+					cards[i].posXFirstBuy = 0;
+				} else if(player.count == 1){
+					cards[i].posXFirstBuy = fieldMarking.xColumn;
+				} else if(player.count == 2){
+					cards[i].posXFirstBuy = fieldMarking.xColumn*2;
+				} else if(player.count == 3){
+					cards[i].posXFirstBuy = fieldMarking.xColumn*3;
+				} else if(player.count == 4){
+					cards[i].posXFirstBuy = fieldMarking.xColumn*4;
+				} else if(player.count == 5){
+					cards[i].posXFirstBuy = fieldMarking.xColumn*5;
+				} else if(player.count == 6){
+					cards[i].posXFirstBuy = 0;
+					nextRow = fieldMarking.yRow
+				} else if(player.count == 7){
+					cards[i].posXFirstBuy = fieldMarking.xColumn;
+					nextRow = fieldMarking.yRow
+				} else if(player.count == 8){
+					cards[i].posXFirstBuy = fieldMarking.xColumn*2;
+					nextRow = fieldMarking.yRow
+				} else if(player.count == 9){
+					cards[i].posXFirstBuy = fieldMarking.xColumn*3;
+					nextRow = fieldMarking.yRow
+				} else if(player.count == 10){
+					cards[i].posXFirstBuy = fieldMarking.xColumn*4;
+					nextRow = fieldMarking.yRow
+				} else if(player.count == 9){
+					cards[i].posXFirstBuy = fieldMarking.xColumn*5;
+					nextRow = fieldMarking.yRow
+				}
+				
+				cards[i].posYFirstBuy = 0;
+			}else	if(cards[i].count == 1){
+				cards[i].posYFirstBuy = 2.5;
+			} else if(cards[i].count == 2){
+				cards[i].posYFirstBuy = 5;
+			} else if(cards[i].count == 3){
+				cards[i].posYFirstBuy = 10;
+			} else if(cards[i].count == 4){
+				cards[i].posYFirstBuy = 12.5;
 			}
-			arrayCards[cards[i].quantity-1].style.top = x + "px";
-			arrayCards[cards[i].quantity-1].style.left = y + "px";
-			cards[i].quantity--
+			cards[i].count++
+			let posXCard = xStartPlayer + cards[i].posXFirstBuy;
+			let posYCard = fieldMarking.yStartPlayer + cards[i].posYFirstBuy +nextRow;
+			arrayCards[cards[i].quantity-1].style.top = posYCard + "px";
+			arrayCards[cards[i].quantity-1].style.left = posXCard + "px";
+			cards[i].quantity--;
+			console.log( "player:" + player.name + " name:" + cards[i].name + " x:" + cards[i].posXFirstBuy + " y:" + cards[i].posYFirstBuy + " atr:"+ atr + " cards.c:"+ cards[i].count + " player.c:"+ player.count)
+			player.atr++
 		}
-		if(idElem == "img"){
+
+		if(idElem == "img"){			
 			if(nameElem == "Пшеница"){
-				player.b1++;
 				animationCards(1,player.b1)
 			}else if(nameElem == "Ферма"){
-				player.b2++;
 				animationCards(2,player.b2)
 			}else if(nameElem == "Пекарня"){
-				player.a2_3++;
 				animationCards(3,player.a2_3)
 			}else if(nameElem == "Кафе"){
-				player.c3++;
 				animationCards(4,player.c3)
 			}else if(nameElem == "Магазин"){
-				player.a4++;
 				animationCards(5,player.a4)
 			}else if(nameElem == "Лес"){
-				player.b5++;
 				animationCards(6,player.b5)
 			}else if(nameElem == "Стадион"){
-				player.d6_1++;
 				animationCards(7,player.d6_1)
 			}else if(nameElem == "Телестанция"){
-				player.d6_2++;
 				animationCards(8,player.d6_2)
 			}else if(nameElem == "Сырзавод"){
-				player.a7++;
 				animationCards(9,player.a7)
 			}else if(nameElem == "Мебель"){
-				player.a8++;
 				animationCards(10,player.a8)
 			}else if(nameElem == "Шахта"){
-				player.b9++;
 				animationCards(11,player.b9)
 			}else if(nameElem == "Ресторан"){
-				player.c9_10++;
 				animationCards(12,player.c9_10)
 			}else if(nameElem == "Яблони"){
-				player.b10++;
 				animationCards(13,player.b10)
 			}else if(nameElem == "Овощебаза"){
-				player.a11_12++;
 				animationCards(14,player.a11_12)
 			}
 		}
+		player.count++;
 	}
 	if(move == 2){
-		buyCards(playerOne, height/2,width/8)
-	}else{
-		buyCards(playerTwo, height/2,width/2)
+		buyCards(playerOne,fieldMarking.xStartOnePlayer);
+	}else if(move == 1){
+		buyCards(playerTwo,fieldMarking.xStartTwoPlayer);
 	}
-	
 }
+}
+function promiseLoad(){
+	function createPromiseLoad(result){
+		return new Promise( (resolve,reject) => {
+			if (load>=1){
+				resolve(result)
+			}
+			
+		});
+	}
+	createPromiseLoad(1).then(result =>{
+		
+		startHiddenWindow.style.width = width + "px";
+		startHiddenWindow.style.height = height + "px";
+		startHiddenWindow.setAttribute("id", "img");
+		startHiddenWindow.style.position = "absolute"
+		startHiddenWindow.style.zIndex = 8;
+		startHiddenWindow.innerHTML = "click";
+		startHiddenWindow.style.background = "black";
+		startHiddenWindow.style.opacity = 0.5;
+		startHiddenWindow.style.cursor = "pointer"
+		startHiddenWindow.style.fontSize = width/2 + "px";
+		startHiddenWindow.style.color = "white"
+		display.appendChild(startHiddenWindow);
+		const imgAll = document.querySelectorAll('#img');
+		imgAll.forEach(img => {
+				img.addEventListener('click', controllerGame);
+		});
 
-
+	})
+	load++
+}
 start.addEventListener("click", startGame);
-exit.addEventListener("click", exitGame);
+start.addEventListener("click", promiseLoad);
+
+
