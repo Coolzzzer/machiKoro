@@ -258,28 +258,7 @@ function addCards(cards,i,id="img"){
 			event = event || window.event;	
 			event.preventDefault();
 		}
-		function createPromiseAll(player){
-			function createWinСondition(startCard,result){
-				return new Promise( (resolve,reject) => {
-					if (startCard >= 1){
-						resolve(result)
-					}
-					
-				});
-			}
-			const win1 = createWinСondition(player.startCard1,1);
-			const win2 = createWinСondition(player.startCard2,2);
-			const win3 = createWinСondition(player.startCard3,3);
-			const win4 = createWinСondition(player.startCard4,4);
-			win1
-			.then(result =>{
-				createDice(cube2)
-			})
-			Promise.all([win1,win2,win3,win4])
-			.then(result => {
-				alert(player.name + " win!!!")
-			})
-		}
+
 		if(!isMobileDevice){
 		}else{
 			if(img.id == "img"){
@@ -288,31 +267,11 @@ function addCards(cards,i,id="img"){
 				img.addEventListener("mousedown",mouseDown)
 			}
 		}
-		createPromiseAll(playerOne);
-		createPromiseAll(playerTwo);
+
 	}
 buldField();
 
-// function showIdOnClick() {
-// 	document.addEventListener('click', function(event) {
-// 			const clickedElement = event.target;
-// 			if (clickedElement.id) {idElem
-// 				return idElem = clickedElement.id
-// 			}
-// 			if(clickedElement.name){
-// 				return nameElem = clickedElement.name;
-				
-// 			}
-// 	});
-// }
-// function b(currentNameElem) {
-//   console.log(currentNameElem);
-// }
-// showIdOnClick();
-
-
 function controllerGame (nameElem,idElem){
-	console.log(nameElem + idElem)
 	const hiddenOneField = document.querySelector("#playerOneHiddenField");
 	const hiddenTwoField = document.querySelector("#playerTwoHiddenField");
 	const moneyCountOne = document.querySelector('#moneyCountOne');
@@ -324,6 +283,7 @@ function controllerGame (nameElem,idElem){
 	playerTwoRoll.addEventListener("click", rollDice);
 	playerOneRoll.addEventListener("click", rollDice);
 	function updateDisplay(player,moneyCount) {
+		alert(`Ход ${player.name}`)
 		player.money -= cardsPrice;
 		moneyCount.innerHTML = `Имя: ${playerOne.name} - Количество монет: ${playerOne.money}`;
 	}
@@ -398,16 +358,12 @@ function controllerGame (nameElem,idElem){
 			arrayCards[cards[i].quantity-1].style.left = posXCard + "px";
 			cards[i].quantity--;
 			console.log("move" + move + " player:" + player.name + " name:" + cards[i].name + " x:" + cards[i].posXFirstBuy + " y:" + cards[i].posYFirstBuy + " atr:"+ atr + " cards.c:"+ cards[i].count + " player.c:"+ player.count)
-			player.atr++
-			hidden2Field.style.display = "block";
-			hidden1Field.style.display = "none";
+			player.atr++;
+			player.count++;
 		}
-		// function animationStandardCards(i,startCard){
-		// 	startCard = 1;
-		// 	arrayCards = document.getElementsByName(nameElem);
-		// 	arrayCards[i].style.top = 20 + "px";
-		// 	console.log(startCard + "" + move)
-		// }
+		function animationStandardCards(startCard){
+			console.log(player)
+		}
 		if(idElem == "img"){			
 			if(nameElem == "Пшеница"){
 				animationCards(1,player.b1)
@@ -437,34 +393,60 @@ function controllerGame (nameElem,idElem){
 				animationCards(13,player.b10)
 			}else if(nameElem == "Овощебаза"){
 				animationCards(14,player.a11_12)
-			} else if(nameElem == "вокзал"){
-				animationStandardCards(0,player.startCard1)
-				playerRoll.addEventListener("clicl", rollDice2);
-			} else if(nameElem == "супер"){
-				animationStandardCards(1,player.startCard2)
-			} else if(nameElem == "парк"){
-				animationStandardCards(2,player.startCard3)
-			} else if(nameElem == "радио"){
-				animationStandardCards(3,player.startCard4)
+			}else if(nameElem == "вокзал"){
+				animationStandardCards()
+				player.startCard1 = 1
+				playerRoll.addEventListener("click", rollDice2);
+			}else if(nameElem == "супер"){
+				animationStandardCards()
+				player.startCard2 = 1
+			}else if(nameElem == "парк"){
+				animationStandardCards()
+				player.startCard3 = 1
+			}else if(nameElem == "радио"){
+				animationStandardCards()
+				player.startCard4 = 1
 			} 
-			player.count++;
+			hidden2Field.style.display = "block";
+			hidden1Field.style.display = "none";
 		}
 		
 	}
 
 	let cardsPrice = 0;
 	if(move == 1){
-		alert(`Ход ${playerOne.name}`);
-		buyCards(playerOne,fieldMarking.xStartOnePlayer,hiddenTwoField,hiddenOneField,playerTwoRoll);
+		buyCards(playerOne,fieldMarking.xStartOnePlayer,hiddenTwoField,hiddenOneField,playerOneRoll);
 		updateDisplay(playerTwo,cards,moneyCountTwo)
 		move++
 	}else if(move == 2){
-		alert(`Ход ${playerTwo.name}`);
-		buyCards(playerTwo,fieldMarking.xStartTwoPlayer,hiddenOneField,hiddenTwoField,playerOneRoll);
+		buyCards(playerTwo,fieldMarking.xStartTwoPlayer,hiddenOneField,hiddenTwoField,playerTwoRoll);
 		updateDisplay(playerOne,cards,moneyCountOne)
 		move--
 	}
 }
+function createPromiseAll(player){
+	function createWinСondition(startCard,result){
+		return new Promise( (resolve,reject) => {
+			if (startCard >= 1){
+				resolve(result)
+			}
+			
+		});
+	}
+	const win1 = createWinСondition(player.startCard1,1);
+	const win2 = createWinСondition(player.startCard2,2);
+	const win3 = createWinСondition(player.startCard3,3);
+	const win4 = createWinСondition(player.startCard4,4);
+	win1
+	.then(result =>{
+		createDice(cube2)
+	})
+	Promise.all([win1,win2,win3,win4])
+	.then(result => {
+		alert(player.name + " win!!!")
+	})
+}
+
 
 function promiseLoad(){
 	function createPromiseLoad(result){
@@ -481,6 +463,8 @@ function promiseLoad(){
 					idElem = img.id;
 					nameElem = img.name
 					controllerGame(nameElem,idElem);
+					createPromiseAll(playerOne);
+					createPromiseAll(playerTwo);
       });
 		});
 	})
