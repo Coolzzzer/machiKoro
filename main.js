@@ -10,7 +10,7 @@ let moneyOne = 3;
 let moneyTwo = 3;
 let newFace;
 let newFace2;
-let move = 0;
+let move = 1;
 let currentFace = 1;
 let currentFace2 = 1;
 let playerCount = 1;
@@ -22,7 +22,6 @@ let diceLeft = 0.8;
 let idDice = "1";
 let idElem;
 let nameElem;
-let arrayCards;
 let posBuyX = height/10;
 let posBuyY = width/8;
 let load = 0;
@@ -107,8 +106,6 @@ function startGame(){
 	game.style.display = "block"
 	buldGameField();
 	load++;
-	playerTwoRoll.style.display = "none";
-	playerOneRoll.style.display = "none";
 	alert(`Ход ${playerOne.name}`);
 }
 function buldGameField(){
@@ -261,142 +258,27 @@ function addCards(cards,i,id="img"){
 			event = event || window.event;	
 			event.preventDefault();
 		}
-		function clickCard(player){
-			
-			if(player.money<cards[i].price){
-				const hiddenOneField = document.querySelector("#playerOneHiddenField")
-			const hiddenTwoField = document.querySelector("#playerTwoHiddenField")
-				alert("недостаточно монет");
-				if(move = 1){
-					hiddenOneField.style.display = "block";
-					hiddenTwoField.style.display = "none";
-				}else{
-					hiddenTwoField.style.display = "block";
-					hiddenOneField.style.display = "none";
-				}						
-			}else{
-				if(cards[i].type == 0){
-					if(player.money >= startCards[i].price){
-						if(i === 0){
-							player.startCard1 = 1;
-						} else if(i === 1){
-							player.startCard2 = 1;
-						} else if(i === 2){
-							player.startCard3 = 1;
-						} else if(i === 3){
-							player.startCard4 = 1;
-						}
-						updateDisplay(startCards)
-						img.setAttribute("src",startCards[i].srcBuy);					
+		function createPromiseAll(player){
+			function createWinСondition(startCard,result){
+				return new Promise( (resolve,reject) => {
+					if (startCard >= 1){
+						resolve(result)
 					}
-				}else if(cards[i].type == 1){
-					if(player.money >= cards[i].price){
-						if(i === 3){
-							player.a2_3 += 1;
-						} else if(i === 5){
-							player.a4 += 1;
-						} else if(i === 9){
-							player.a7 += 1;
-						} else if(i === 10){
-							player.a8 += 1;
-						} else if(i === 14){
-							player.a11_12 += 1;
-						}
-						player.money -= cards[i].price;
-						img.removeEventListener("click", transitionMove);						
-					}
-				}
-				if(move==1){
-					alert(`Ход ${playerTwo.name}`);
-					move++;
-				}else if(move==2){
-					move--;
-					alert(`Ход ${playerOne.name}`);
-				}
+					
+				});
 			}
-
-			
-		}
-		function updateDisplay(cards) {
-			const moneyCountOne = document.querySelector('#moneyCountOne');
-			const moneyCountTwo = document.querySelector('#moneyCountTwo');
-			if(move==1){
-				playerOne.money -= cards[i].price;
-				moneyCountOne.innerHTML = `Имя: ${playerOne.name} - Количество монет: ${playerOne.money}`;
-			}else if(move==2){
-				playerTwo.money -= cards[i].price;
-				moneyCountTwo.innerHTML = `Имя: ${playerTwo.name} - Количество монет: ${playerTwo.money}`;
-			}
-			img.removeEventListener("click", transitionMove);
-		}
-		function transitionMove(event){
-			event = event || window.event;
-			const hiddenOneField = document.querySelector("#playerOneHiddenField")
-			const hiddenTwoField = document.querySelector("#playerTwoHiddenField")
-			const playerOneRoll = document.querySelector(`#playerOneRoll`);
-			const playerTwoRoll = document.querySelector(`#playerTwoRoll`);
-			playerOneRoll.style.display = "block";
-			playerTwoRoll.style.display = "block";
-			playerTwoRoll.addEventListener("mouseup", rollDice);
-			playerOneRoll.addEventListener("mouseup", rollDice);
-			if(playerOne.startCard1 == 1){
-				playerOneRoll.addEventListener("mouseup", rollDice2);
-				playerOneRoll.addEventListener("touchend ", rollDice2);
-			}else if(playerTwo.startCard1 == 1){
-				playerTwoRoll.addEventListener("mouseup", rollDice2);
-				playerTwoRoll.addEventListener("touchend ", rollDice2);
-			}	
-			if(move == 1){
-				clickCard(playerOne);					
-					hiddenOneField.style.display = "block";
-					hiddenTwoField.style.display = "none";
-			}else if(move == 2){
-				clickCard(playerTwo)
-					hiddenOneField.style.display = "none";
-					hiddenTwoField.style.display = "block";
-			}
-			function rollDice() {
-				newFace = Math.floor(Math.random() * 6) + 1;			
-				cube1.style.transform = rotations[newFace];				
-				setTimeout(() => {
-						cube1.style.transform = rotations[newFace];
-						currentFace = newFace;
-				}, 1000);
-				return newFace;
-			}
-			function rollDice2() {
-				newFace2 = Math.floor(Math.random() * 6) + 1;		
-				cube2.style.transform = rotations[newFace2];
-				setTimeout(() => {
-						cube2.style.transform = rotations[newFace2];
-						currentFace2 = newFace2;
-				}, 1000);
-				return newFace2;
-			}
-			function createPromiseAll(player){
-				function createWinСondition(startCard,result){
-					return new Promise( (resolve,reject) => {
-						if (startCard >= 1){
-							resolve(result)
-						}
-						
-					});
-				}
-				const win1 = createWinСondition(player.startCard1,1);
-				const win2 = createWinСondition(player.startCard2,2);
-				const win3 = createWinСondition(player.startCard3,3);
-				const win4 = createWinСondition(player.startCard4,4);
-				win1
-				.then(result =>{
-					createDice(cube2)
-				})
-				Promise.all([win1,win2,win3,win4])
-				.then(result => {
-					alert(player.name + " win!!!")
-				})
-			}
-			createPromiseAll(playerOne);
-			createPromiseAll(playerTwo);
+			const win1 = createWinСondition(player.startCard1,1);
+			const win2 = createWinСondition(player.startCard2,2);
+			const win3 = createWinСondition(player.startCard3,3);
+			const win4 = createWinСondition(player.startCard4,4);
+			win1
+			.then(result =>{
+				createDice(cube2)
+			})
+			Promise.all([win1,win2,win3,win4])
+			.then(result => {
+				alert(player.name + " win!!!")
+			})
 		}
 		if(!isMobileDevice){
 		}else{
@@ -406,35 +288,66 @@ function addCards(cards,i,id="img"){
 				img.addEventListener("mousedown",mouseDown)
 			}
 		}
-		img.addEventListener("click", transitionMove);
+		createPromiseAll(playerOne);
+		createPromiseAll(playerTwo);
 	}
 buldField();
 
-function showIdOnClick() {
-	document.addEventListener('click', function(event) {
-			const clickedElement = event.target;
-			
-			if (clickedElement.id) {idElem
-				idElem = clickedElement.id
-			}
-			if(clickedElement.name){
-				nameElem = clickedElement.name
-			}
-	});
-}
+// function showIdOnClick() {
+// 	document.addEventListener('click', function(event) {
+// 			const clickedElement = event.target;
+// 			if (clickedElement.id) {idElem
+// 				return idElem = clickedElement.id
+// 			}
+// 			if(clickedElement.name){
+// 				return nameElem = clickedElement.name;
+				
+// 			}
+// 	});
+// }
+// function b(currentNameElem) {
+//   console.log(currentNameElem);
+// }
+// showIdOnClick();
 
-showIdOnClick();
 
-function controllerGame (){
-	if(move == 0){
-		startHiddenWindow.style.display = "none";
-		console.log('g')
-		move++
-	}else{
-	
-	function buyCards(player,xStartPlayer){
+function controllerGame (nameElem,idElem){
+	console.log(nameElem + idElem)
+	const hiddenOneField = document.querySelector("#playerOneHiddenField");
+	const hiddenTwoField = document.querySelector("#playerTwoHiddenField");
+	const moneyCountOne = document.querySelector('#moneyCountOne');
+	const moneyCountTwo = document.querySelector('#moneyCountTwo');
+	const playerOneRoll = document.querySelector(`#playerOneRoll`);
+	const playerTwoRoll = document.querySelector(`#playerTwoRoll`);
+	const skipTwo = document.querySelector("skipIdplayerTwoRoll");
+	const skipOne = document.querySelector("skipIdplayerOneRoll")
+	playerTwoRoll.addEventListener("click", rollDice);
+	playerOneRoll.addEventListener("click", rollDice);
+	function updateDisplay(player,moneyCount) {
+		player.money -= cardsPrice;
+		moneyCount.innerHTML = `Имя: ${playerOne.name} - Количество монет: ${playerOne.money}`;
+	}
+	function rollDice() {
+		newFace = Math.floor(Math.random() * 6) + 1;			
+		cube1.style.transform = rotations[newFace];				
+		setTimeout(() => {
+				cube1.style.transform = rotations[newFace];
+				currentFace = newFace;
+		}, 1000);
+		return newFace;
+	}
+	function rollDice2() {
+		newFace2 = Math.floor(Math.random() * 6) + 1;		
+		cube2.style.transform = rotations[newFace2];
+		setTimeout(() => {
+				cube2.style.transform = rotations[newFace2];
+				currentFace2 = newFace2;
+		}, 1000);
+		return newFace2;
+	}
+	function buyCards(player,xStartPlayer,hidden1Field,hidden2Field,playerRoll){
 		function animationCards(i,atr){
-			arrayCards = document.getElementsByName(nameElem);
+			const arrayCards = document.getElementsByName(nameElem);
 			let nextRow = 0;
 			if(cards[i].count == 0){
 				if(player.count == 0){
@@ -464,11 +377,10 @@ function controllerGame (){
 				} else if(player.count == 10){
 					cards[i].posXFirstBuy = fieldMarking.xColumn*4;
 					nextRow = fieldMarking.yRow
-				} else if(player.count == 9){
+				} else if(player.count == 11){
 					cards[i].posXFirstBuy = fieldMarking.xColumn*5;
 					nextRow = fieldMarking.yRow
 				}
-				
 				cards[i].posYFirstBuy = 0;
 			}else	if(cards[i].count == 1){
 				cards[i].posYFirstBuy = 2.5;
@@ -485,10 +397,17 @@ function controllerGame (){
 			arrayCards[cards[i].quantity-1].style.top = posYCard + "px";
 			arrayCards[cards[i].quantity-1].style.left = posXCard + "px";
 			cards[i].quantity--;
-			console.log( "player:" + player.name + " name:" + cards[i].name + " x:" + cards[i].posXFirstBuy + " y:" + cards[i].posYFirstBuy + " atr:"+ atr + " cards.c:"+ cards[i].count + " player.c:"+ player.count)
+			console.log("move" + move + " player:" + player.name + " name:" + cards[i].name + " x:" + cards[i].posXFirstBuy + " y:" + cards[i].posYFirstBuy + " atr:"+ atr + " cards.c:"+ cards[i].count + " player.c:"+ player.count)
 			player.atr++
+			hidden2Field.style.display = "block";
+			hidden1Field.style.display = "none";
 		}
-
+		// function animationStandardCards(i,startCard){
+		// 	startCard = 1;
+		// 	arrayCards = document.getElementsByName(nameElem);
+		// 	arrayCards[i].style.top = 20 + "px";
+		// 	console.log(startCard + "" + move)
+		// }
 		if(idElem == "img"){			
 			if(nameElem == "Пшеница"){
 				animationCards(1,player.b1)
@@ -518,49 +437,54 @@ function controllerGame (){
 				animationCards(13,player.b10)
 			}else if(nameElem == "Овощебаза"){
 				animationCards(14,player.a11_12)
-			}
+			} else if(nameElem == "вокзал"){
+				animationStandardCards(0,player.startCard1)
+				playerRoll.addEventListener("clicl", rollDice2);
+			} else if(nameElem == "супер"){
+				animationStandardCards(1,player.startCard2)
+			} else if(nameElem == "парк"){
+				animationStandardCards(2,player.startCard3)
+			} else if(nameElem == "радио"){
+				animationStandardCards(3,player.startCard4)
+			} 
+			player.count++;
 		}
-		player.count++;
+		
 	}
-	if(move == 2){
-		buyCards(playerOne,fieldMarking.xStartOnePlayer);
-	}else if(move == 1){
-		buyCards(playerTwo,fieldMarking.xStartTwoPlayer);
+
+	let cardsPrice = 0;
+	if(move == 1){
+		alert(`Ход ${playerOne.name}`);
+		buyCards(playerOne,fieldMarking.xStartOnePlayer,hiddenTwoField,hiddenOneField,playerTwoRoll);
+		updateDisplay(playerTwo,cards,moneyCountTwo)
+		move++
+	}else if(move == 2){
+		alert(`Ход ${playerTwo.name}`);
+		buyCards(playerTwo,fieldMarking.xStartTwoPlayer,hiddenOneField,hiddenTwoField,playerOneRoll);
+		updateDisplay(playerOne,cards,moneyCountOne)
+		move--
 	}
 }
-}
+
 function promiseLoad(){
 	function createPromiseLoad(result){
 		return new Promise( (resolve,reject) => {
 			if (load>=1){
 				resolve(result)
 			}
-			
 		});
 	}
 	createPromiseLoad(1).then(result =>{
-		
-		startHiddenWindow.style.width = width + "px";
-		startHiddenWindow.style.height = height + "px";
-		startHiddenWindow.setAttribute("id", "img");
-		startHiddenWindow.style.position = "absolute"
-		startHiddenWindow.style.zIndex = 8;
-		startHiddenWindow.innerHTML = "click";
-		startHiddenWindow.style.background = "black";
-		startHiddenWindow.style.opacity = 0.5;
-		startHiddenWindow.style.cursor = "pointer"
-		startHiddenWindow.style.fontSize = width/2 + "px";
-		startHiddenWindow.style.color = "white"
-		display.appendChild(startHiddenWindow);
 		const imgAll = document.querySelectorAll('#img');
 		imgAll.forEach(img => {
-				img.addEventListener('click', controllerGame);
+				img.addEventListener('click', () => {
+					idElem = img.id;
+					nameElem = img.name
+					controllerGame(nameElem,idElem);
+      });
 		});
-
 	})
 	load++
 }
 start.addEventListener("click", startGame);
 start.addEventListener("click", promiseLoad);
-
-
