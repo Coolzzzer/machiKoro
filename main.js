@@ -2,7 +2,13 @@
 const display = document.querySelector("#display");
 const menu = document.createElement("div");
 const start = document.createElement("button");
-const startHiddenWindow = document.createElement("div");
+const game = document.createElement("div");
+const cube1 = document.createElement("div");
+const cube2 = document.createElement("div");
+const winWindow = document.createElement("div");
+const inputPlayerOne = document.createElement("input")
+const inputPlayerTwo = document.createElement("input")
+let sd ;
 let width = window.innerWidth;
 let height = window.innerHeight;
 let size = 1.6;
@@ -27,9 +33,6 @@ let posBuyX = height/10;
 let posBuyY = width/8;
 let imgAll;
 let load = 0;
-const game = document.createElement("div");
-const cube1 = document.createElement("div");
-const cube2 = document.createElement("div");
 const rotations = {
 	1: 'rotateX(0deg) rotateY(0deg)',
 	2: 'rotateX(0deg) rotateY(-90deg)',
@@ -71,12 +74,12 @@ const startCards = [
 	{	name:"Пропуск",price:0, type: 4, src:"https://coolzzzer.github.io/machiKoro/пропуск.png"}
 ]
 const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
-let playerOne = {name: "player1",money:8,count: 0,
+let playerOne = {name: "Игрок 1",money:8,count: 0,
 	startCard1:0,startCard2:0,startCard3:0,startCard4:0,
 	b1:0,b2:0,a2_3:0,c3:0,a4:0,b5:0,d6_1:0,
 	d6_2:0,a7:0,a8:0,b9:0,c9_10:0,b10:0,a11_12:0,
 }
-let playerTwo = {name: "player2",money:200,count: 0,
+let playerTwo = {name: "Игрок 2",money:200,count: 0,
 	startCard1:0,startCard2:0,startCard3:0,startCard4:0,
 	b1:0,b2:0,a2_3:0,c3:0,a4:0,b5:0,d6_1:0,
 	d6_2:0,a7:0,a8:0,b9:0,c9_10:0,b10:0,a11_12:0,
@@ -99,8 +102,27 @@ function buldField(){
 	display.appendChild(menu);
 	display.appendChild(game);
 	menu.appendChild(start);
+	menu.appendChild(inputPlayerOne);
+	menu.appendChild(inputPlayerTwo);
+	inputPlayerOne.placeholder = playerOne.name;
+	inputPlayerTwo.placeholder = playerTwo.name;
 	game.style.display = "none";
 	start.innerHTML = "Начать";
+	
+	winWindow.style.height = height + "px";
+	winWindow.style.width = width + "px";
+	winWindow.style.position = "absolute";
+	winWindow.style.left = 0;
+	winWindow.style.top = 0;
+	winWindow.style.opacity = 0.5;
+	winWindow.style.backgroundColor = "white";
+	winWindow.style.fontSize = width/8 + "px";
+	winWindow.style.zIndex = 15;
+	winWindow.style.justifyContent = "center";
+	winWindow.style.alignItems = "center";
+	winWindow.style.display = "none"
+
+	display.appendChild(winWindow);
 }
 function startGame(){
 	menu.style.display = "none";
@@ -122,6 +144,12 @@ function buldGameField(){
 			posX = width/25;
 		}
 	}	
+if(inputPlayerOne.value){
+	playerOne.name = inputPlayerOne.value;
+}
+if(inputPlayerTwo.value){
+	playerTwo.name = inputPlayerTwo.value;
+}
 createPlayerField(25,playerOne,"moneyCountOne","playerOneRoll","playerOneHiddenField");
 createPlayerField(25 + width/2.1,playerTwo,"moneyCountTwo","playerTwoRoll","playerTwoHiddenField");
 
@@ -176,6 +204,7 @@ function createDice(cube){
 	idDice = "2"
 }
 function createPlayerField(posX,player,moneyCountId,playerRoll,playerHiddenField){
+
 const playerField = document.createElement("div");
 const hiddenField = document.createElement("div");
 const moneyCount = document.createElement("div");
@@ -486,7 +515,7 @@ function controllerGame (nameElem,idElem){
 	}else if(price == "roll"){
 		droppedDice = newFace + newFace2;
 		setTimeout(() => {
-			alert(droppedDice)
+			alert(`Число: ${droppedDice}`)
 	}, 1000);
 		if(droppedDice == 1){
 			if(playerOne.b1>0){
@@ -659,7 +688,8 @@ function createPromiseAll(player){
 	const win4 = createWinСondition(player.startCard4,4);
 	Promise.all([win1,win2,win3,win4])
 	.then(result => {
-		alert(player.name + " победил!!!")
+		winWindow.style.display = "flex";
+		winWindow.innerHTML = player.name + " победил!"
 	})
 }
 start.addEventListener("click", startGame);
