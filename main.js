@@ -422,12 +422,16 @@ function controllerGame (nameElem,idElem){
 
 	const cardsTarget = document.getElementsByName(nameElem);
 	let price = cardsTarget[1].getAttribute("price")
-	if((price != "buy")&&(price != "roll")){
+	if(price == "buy"){
+	}else if(price == "roll"){
+	}else{
 		if(move == 1){
 			if(playerOne.money>=price){
 				playerOne.money-=price;
 				buyCards(playerOne,fieldMarking.xStartOnePlayer,hiddenTwoField,hiddenOneField,playerOneRoll,moneyCountOne);
-				move++
+				move++;
+				playerOneRoll.style.display = "block";
+				playerTwoRoll.style.display = "block";
 			}else{
 				alert("Недостаточно монет!!!")
 			}	
@@ -435,13 +439,13 @@ function controllerGame (nameElem,idElem){
 			if(playerTwo.money>=price){
 				playerTwo.money-=price;
 				buyCards(playerTwo,fieldMarking.xStartTwoPlayer,hiddenOneField,hiddenTwoField,playerTwoRoll,moneyCountTwo);
-				move--
+				move--;
+				playerOneRoll.style.display = "block";
+				playerTwoRoll.style.display = "block";
 			}else{
 				alert("Недостаточно монет!!!")
 			}
 		}
-		playerOneRoll.style.display = "block";
-		playerTwoRoll.style.display = "block";
 	}
 	}
 	
