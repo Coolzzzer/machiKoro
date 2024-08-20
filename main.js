@@ -87,7 +87,7 @@ function isMobileDevice() {
 function buldField(){
 	if (isMobileDevice()) {
 		if(width<height){
-			alert("Для комфортной игры, переверните телефон")
+			alert("Для комфортной игры, переверните телефон и перезагрузите страницу")
 		}
 	}
 	display.style.backgroundColor = "green"
@@ -255,8 +255,7 @@ function addCards(cards,i,id="img"){
 			event = event || window.event;	
 			event.preventDefault();
 		}
-		if(!isMobileDevice){
-		}else{
+		if(isMobileDevice){
 			if(img.id == "img"){
 				img.addEventListener("mouseover",mouseOver)
 				img.addEventListener("mouseout",mouseOut)
