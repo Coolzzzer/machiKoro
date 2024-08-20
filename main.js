@@ -10,6 +10,7 @@ let moneyOne = 3;
 let moneyTwo = 3;
 let newFace;
 let newFace2;
+let droppedDice;
 let move = 1;
 let currentFace = 1;
 let currentFace2 = 1;
@@ -40,7 +41,7 @@ const rotations = {
 const fieldMarking = {
 	xColumn: width/14,
 	yRow: height/6,
-	yStartPlayer: width/2.7,
+	yStartPlayer: height/1.75,
 	xStartOnePlayer : width/25,
 	xStartTwoPlayer : width/1.94
 }
@@ -110,13 +111,14 @@ function startGame(){
 }
 function buldGameField(){
 	createDice(cube1);
+	createDice(cube2);
 	for (let i = 1;i<=cards.length-1;i++){
 		for (let j = 1;j<=5;j++){
 			addCards(cards, i);
 		}
 		posX+= width/11;
 		if(i % 7 === 0){
-			posY+= width/12;
+			posY+= width/14;
 			posX = width/25;
 		}
 	}	
@@ -182,15 +184,15 @@ moneyCount.setAttribute("id", `${moneyCountId}`);
 moneyCount.innerHTML = `Имя: ${player.name} - Количество монет: ${player.money}`;
 playerField.style.position = "absolute"
 playerField.style.width = width/2.3 +"px";
-playerField.style.height = height - height/3 +"px";
-playerField.style.top = height/3 +"px";
+playerField.style.height = height - height/2.7 +"px";
+playerField.style.top = height/2.7 +"px";
 playerField.style.left = posX +"px";
 playerField.style.background = "#FFE4B5";
 hiddenField.setAttribute("id", playerHiddenField)
 hiddenField.style.position = "absolute"
 hiddenField.style.width = width/2.3 +"px";
-hiddenField.style.height = height - height/3 +"px";
-hiddenField.style.top = height/3 +"px";
+hiddenField.style.height = height - height/2.7 +"px";
+hiddenField.style.top = height/2.7 +"px";
 hiddenField.style.left = posX +"px";
 hiddenField.style.zIndex = 2;
 hiddenField.style.opacity = 0.7;
@@ -218,8 +220,8 @@ function addCards(cards,i,id="img"){
 		img.setAttribute("name",cards[i].name);
 		img.setAttribute("id",id);
 		img.setAttribute("price", cards[i].price)
-		img.style.width = width/17 + "px";
-		img.style.height = width/13 + "px";
+		img.style.width = width/20 + "px";
+		img.style.height = width/15 + "px";
 		img.style.borderRadius = width/150 + "px";
 		img.style.position = "absolute";
 		if((i==0)&&(playerCount==2)){
@@ -245,15 +247,14 @@ function addCards(cards,i,id="img"){
 		function mouseOut(event){
 			event = event || window.event;
 			img.style.borderRadius = width/150 + "px";
-			img.style.width = width/17 + "px";
-			img.style.height = width/13 + "px";
+			img.style.width = width/20 + "px";
+			img.style.height = width/15 + "px";
 			img.style.zIndex = 1;
 		}
 		function mouseDown(event){
 			event = event || window.event;	
 			event.preventDefault();
 		}
-
 		if(!isMobileDevice){
 		}else{
 			if(img.id == "img"){
@@ -262,15 +263,41 @@ function addCards(cards,i,id="img"){
 				img.addEventListener("mousedown",mouseDown)
 			}
 		}
-				img.addEventListener('click', () => {
-					idElem = img.id;
-					nameElem = img.name
-					controllerGame(nameElem,idElem);
-					createPromiseAll(playerOne);
-					createPromiseAll(playerTwo);})
+		if(img.id == "playerOneRoll"){
+			const playerOneRoll = document.querySelector(`#playerOneRoll`);
+			playerOneRoll.addEventListener("click", rollDice)
+		} else if(img.id == "playerTwoRoll"){
+			const playerTwoRoll = document.querySelector(`#playerTwoRoll`);
+			playerTwoRoll.addEventListener("click", rollDice)
+		}
+		img.addEventListener('click', () => {
+			idElem = img.id;
+			nameElem = img.name
+			controllerGame(nameElem,idElem);
+			createPromiseAll(playerOne);
+			createPromiseAll(playerTwo);})
 	}
 buldField();
-
+function rollDice() {
+	newFace = Math.floor(Math.random() * 6) + 1;
+	cube1.style.transform = rotations[newFace];		
+	setTimeout(() => {
+			cube1.style.transform = rotations[newFace];
+			currentFace = newFace;
+	}, 1000);
+	playerOneRoll.style.display = "none";
+	playerTwoRoll.style.display = "none";
+	return newFace;
+}
+function rollDice2() {
+	newFace2 = Math.floor(Math.random() * 6) + 1;
+	cube2.style.transform = rotations[newFace2];		
+	setTimeout(() => {
+			cube2.style.transform = rotations[newFace2];
+			currentFace2 = newFace2;
+	}, 1000);
+	return newFace2;
+}
 function controllerGame (nameElem,idElem){
 	const hiddenOneField = document.querySelector("#playerOneHiddenField");
 	const hiddenTwoField = document.querySelector("#playerTwoHiddenField");
@@ -278,39 +305,16 @@ function controllerGame (nameElem,idElem){
 	const moneyCountTwo = document.querySelector('#moneyCountTwo');
 	const playerOneRoll = document.querySelector(`#playerOneRoll`);
 	const playerTwoRoll = document.querySelector(`#playerTwoRoll`);
-	function rollDice() {
-		newFace = Math.floor(Math.random() * 6) + 1;			
-		cube1.style.transform = rotations[newFace];				
-		setTimeout(() => {
-				cube1.style.transform = rotations[newFace];
-				currentFace = newFace;
-		}, 1000);
-		playerOneRoll.style.display = "none";
-		playerTwoRoll.style.display = "none";
-		return newFace;
-	}
-	function rollDice2() {
-		newFace2 = Math.floor(Math.random() * 6) + 1;		
-		cube2.style.transform = rotations[newFace2];
-		setTimeout(() => {
-				cube2.style.transform = rotations[newFace2];
-				currentFace2 = newFace2;
-		}, 1000);
-		return newFace2;
-	}
+
 	if(load == 0){
 		load = 1;
-		playerTwoRoll.addEventListener("click", rollDice);
-		playerOneRoll.addEventListener("click", rollDice);
 		hiddenTwoField.style.display = "block";
 	}else{
 	function updateDisplay(player,moneyCount) {
 		moneyCount.innerHTML = `Имя: ${player.name} - Количество монет: ${player.money}`;
 	}
-
-
 	function buyCards(player,xStartPlayer,hidden1Field,hidden2Field,playerRoll,moneyCount){
-		function animationCards(i,atr){
+		function animationCards(i){
 			const arrayCards = document.getElementsByName(nameElem);
 			let nextRow = 0;
 			if(cards[i].count == 0){
@@ -346,72 +350,94 @@ function controllerGame (nameElem,idElem){
 					nextRow = fieldMarking.yRow
 				}
 				cards[i].posYFirstBuy = 0;
+				console.log(player)
 			}else	if(cards[i].count == 1){
 				cards[i].posYFirstBuy = 2.5;
+				console.log(player)
 			} else if(cards[i].count == 2){
 				cards[i].posYFirstBuy = 5;
+				console.log(player)
 			} else if(cards[i].count == 3){
 				cards[i].posYFirstBuy = 10;
+				console.log(player)
 			} else if(cards[i].count == 4){
 				cards[i].posYFirstBuy = 12.5;
-				arrayCards.setAttribute("price", "buy")
+				console.log(player)
+			}else if(cards[i].count == 5){
+				arrayCards[0].setAttribute("price", "buy");
+				arrayCards[1].setAttribute("price", "buy");
+				arrayCards[2].setAttribute("price", "buy");
+				arrayCards[3].setAttribute("price", "buy");
+				arrayCards[4].setAttribute("price", "buy");
 			}
-			cards[i].count++
+			cards[i].count++;
 			let posXCard = xStartPlayer + cards[i].posXFirstBuy;
 			let posYCard = fieldMarking.yStartPlayer + cards[i].posYFirstBuy +nextRow;
 			arrayCards[cards[i].quantity-1].style.top = posYCard + "px";
 			arrayCards[cards[i].quantity-1].style.left = posXCard + "px";
 			cards[i].quantity--;
-			console.log("move" + move + " player:" + player.name + " name:" + cards[i].name + " x:" + cards[i].posXFirstBuy + " y:" + cards[i].posYFirstBuy + " atr:"+ atr + " cards.c:"+ cards[i].count + " player.c:"+ player.count)
-			player.atr++;
 			player.count++;
 		}
 		function animationStandardCards(i){
 			const arrayCards = document.getElementsByName(nameElem);
-			arrayCards[move-1].setAttribute("src", startCards[i+1].srcBuy);
+			arrayCards[move-1].setAttribute("src", startCards[i].srcBuy);
 			arrayCards[move-1].setAttribute("price", "buy");
 		}
 		if(idElem == "img"){	
 			if(nameElem == "Пшеница"){
-				animationCards(1,player.b1)
+				animationCards(1)
+				player.b1++
 			}else if(nameElem == "Ферма"){
-				animationCards(2,player.b2)
+				animationCards(2)
+				player.b2++
 			}else if(nameElem == "Пекарня"){
-				animationCards(3,player.a2_3)
+				animationCards(3)
+				player.a2_3++
 			}else if(nameElem == "Кафе"){
-				animationCards(4,player.c3)
+				animationCards(4)
+				player.c3++
 			}else if(nameElem == "Магазин"){
-				animationCards(5,player.a4)
+				animationCards(5)
+				player.a4++
 			}else if(nameElem == "Лес"){
-				animationCards(6,player.b5)
+				animationCards(6)
+				player.b5++
 			}else if(nameElem == "Стадион"){
-				animationCards(7,player.d6_1)
+				animationCards(7)
+				player.d6_1++
 			}else if(nameElem == "Телестанция"){
-				animationCards(8,player.d6_2)
+				animationCards(8)
+				player.d6_2++
 			}else if(nameElem == "Сырзавод"){
-				animationCards(9,player.a7)
+				animationCards(9)
+				player.a7++
 			}else if(nameElem == "Мебель"){
-				animationCards(10,player.a8)
+				animationCards(10)
+				player.a8++
 			}else if(nameElem == "Шахта"){
-				animationCards(11,player.b9)
+				animationCards(11)
+				player.b9++
 			}else if(nameElem == "Ресторан"){
-				animationCards(12,player.c9_10)
+				animationCards(12)
+				player.c9_10++
 			}else if(nameElem == "Яблони"){
-				animationCards(13,player.b10)
+				animationCards(13)
+				player.b10++
 			}else if(nameElem == "Овощебаза"){
-				animationCards(14,player.a11_12)
+				animationCards(14)
+				player.a11_12++
 			}else if(nameElem == "вокзал"){
-				animationStandardCards(0)
-				player.startCard1 = 1
-				playerRoll.addEventListener("click", rollDice2);
-			}else if(nameElem == "супер"){
 				animationStandardCards(1)
+				player.startCard1 = 1;
+				playerRoll.addEventListener("click", rollDice2);			
+			}else if(nameElem == "супер"){
+				animationStandardCards(2)
 				player.startCard2 = 1
 			}else if(nameElem == "парк"){
-				animationStandardCards(2)
+				animationStandardCards(3)
 				player.startCard3 = 1
 			}else if(nameElem == "радио"){
-				animationStandardCards(3)
+				animationStandardCards(4         )
 				player.startCard4 = 1
 			}
 			updateDisplay(player,moneyCount);
@@ -421,7 +447,7 @@ function controllerGame (nameElem,idElem){
 	}
 
 	const cardsTarget = document.getElementsByName(nameElem);
-	let price = cardsTarget[1].getAttribute("price")
+	let price = cardsTarget[move-1].getAttribute("price")
 	if(price == "buy"){
 	}else if(price == "roll"){
 	}else{
@@ -463,13 +489,9 @@ function createPromiseAll(player){
 	const win2 = createWinСondition(player.startCard2,2);
 	const win3 = createWinСondition(player.startCard3,3);
 	const win4 = createWinСondition(player.startCard4,4);
-	win1
-	.then(result =>{
-		createDice(cube2)
-	})
 	Promise.all([win1,win2,win3,win4])
 	.then(result => {
-		alert(player.name + " win!!!")
+		alert(player.name + " победил!!!")
 	})
 }
 
