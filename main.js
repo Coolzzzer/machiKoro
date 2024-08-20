@@ -9,7 +9,7 @@ let size = 1.6;
 let moneyOne = 3;
 let moneyTwo = 3;
 let newFace;
-let newFace2;
+let newFace2 = 0;
 let droppedDice;
 let move = 1;
 let currentFace = 1;
@@ -40,7 +40,7 @@ const rotations = {
 };
 const fieldMarking = {
 	xColumn: width/14,
-	yRow: height/6,
+	yRow: height/5.5,
 	yStartPlayer: height/1.75,
 	xStartOnePlayer : width/25,
 	xStartTwoPlayer : width/1.94
@@ -65,7 +65,7 @@ const cards = [
 const startCards = [
 	{ name:"кости",price:"roll", type: 4, src:"https://coolzzzer.github.io/machiKoro/кости.png"},
 	{	name:"вокзал",price:4,src: "https://coolzzzer.github.io/machiKoro/вокзал-.jpg",type:0,srcBuy: "https://coolzzzer.github.io/machiKoro/вокзал.jpg"},
-	{	name:"супер",price:10,src: "https://coolzzzer.github.io/machiKoro/супер-.jpg",type:0,srcBuy: "https://coolzzzer.github.io/machiKoro/супер.jpg"},
+	{	name:"супер",price:10,src: "https://coolzzzer.github.io/machiKoro/супер-.jpg",value: 0, type:0,srcBuy: "https://coolzzzer.github.io/machiKoro/супер.jpg"},
 	{	name:"парк",price:16,src: "https://coolzzzer.github.io/machiKoro/парк-.jpg",type:0,srcBuy: "https://coolzzzer.github.io/machiKoro/парк.jpg"},
 	{	name:"радио",price:22,src: "https://coolzzzer.github.io/machiKoro/радио-.jpg",type:0,srcBuy: "https://coolzzzer.github.io/machiKoro/радио.jpg"},
 	{	name:"Пропуск",price:0, type: 4, src:"https://coolzzzer.github.io/machiKoro/пропуск.png"}
@@ -242,7 +242,7 @@ function addCards(cards,i,id="img"){
 			img.style.borderRadius = width/100 + "px";
 			img.style.width = width/5.5 + "px";
 			img.style.height = width/4 + "px";
-			img.style.zIndex = 2;
+			img.style.zIndex = 10;
 		}
 		function mouseOut(event){
 			event = event || window.event;
@@ -298,6 +298,23 @@ function rollDice2() {
 	}, 1000);
 	return newFace2;
 }
+function resultBlue(player,atr,profit){
+	if(atr>0){
+		player.money+=profit*atr;
+	}
+}
+function resultRed(player,atr,profit,debter){
+	if(atr>0){
+		let money = profit*atr;
+		if(debter.money<=money){
+			player.money+=debter.money
+			debter.money=0
+		}else if(debter.money>money){
+			player.money+=money;
+			debter.money-=money;
+		}
+	}
+}
 function controllerGame (nameElem,idElem){
 	const hiddenOneField = document.querySelector("#playerOneHiddenField");
 	const hiddenTwoField = document.querySelector("#playerTwoHiddenField");
@@ -350,32 +367,33 @@ function controllerGame (nameElem,idElem){
 					nextRow = fieldMarking.yRow
 				}
 				cards[i].posYFirstBuy = 0;
-				console.log(player)
 			}else	if(cards[i].count == 1){
+				player.count--;
 				cards[i].posYFirstBuy = 2.5;
-				console.log(player)
 			} else if(cards[i].count == 2){
+				player.count--;
 				cards[i].posYFirstBuy = 5;
-				console.log(player)
 			} else if(cards[i].count == 3){
+				player.count--;
 				cards[i].posYFirstBuy = 10;
-				console.log(player)
 			} else if(cards[i].count == 4){
+				player.count--;
 				cards[i].posYFirstBuy = 12.5;
-				console.log(player)
 			}else if(cards[i].count == 5){
+				player.count--;
 				arrayCards[0].setAttribute("price", "buy");
 				arrayCards[1].setAttribute("price", "buy");
 				arrayCards[2].setAttribute("price", "buy");
 				arrayCards[3].setAttribute("price", "buy");
 				arrayCards[4].setAttribute("price", "buy");
 			}
-			cards[i].count++;
+
 			let posXCard = xStartPlayer + cards[i].posXFirstBuy;
 			let posYCard = fieldMarking.yStartPlayer + cards[i].posYFirstBuy +nextRow;
 			arrayCards[cards[i].quantity-1].style.top = posYCard + "px";
 			arrayCards[cards[i].quantity-1].style.left = posXCard + "px";
 			cards[i].quantity--;
+			cards[i].count++;
 			player.count++;
 		}
 		function animationStandardCards(i){
@@ -450,6 +468,75 @@ function controllerGame (nameElem,idElem){
 	let price = cardsTarget[move-1].getAttribute("price")
 	if(price == "buy"){
 	}else if(price == "roll"){
+		droppedDice = newFace+newFace2;
+		setTimeout(() => {
+			alert(droppedDice)
+	}, 1000);
+		if(droppedDice == 1){
+			if(playerOne.b1>0){
+				resultBlue(playerOne,playerOne.b1,1);
+			}
+			if(playerTwo.b1>0){
+				resultBlue(playerTwo,playerTwo.b1,1);
+			}
+		}
+		if(droppedDice == 2){
+			if(playerOne.b2>0){
+				resultBlue(playerOne,playerOne.b2,1);
+			}
+			if(playerTwo.b2>0){
+				resultBlue(playerTwo,playerTwo.b2,1);
+			}
+		}
+		if(droppedDice == 5){
+			if(playerOne.b5>0){
+				resultBlue(playerOne,playerOne.b5,1);
+			}
+			if(playerTwo.b5>0){
+				resultBlue(playerTwo,playerTwo.b5,1);
+			}
+		}
+		if(droppedDice == 9){
+			if(playerOne.b9>0){
+				resultBlue(playerOne,playerOne.b9,5);
+			}
+			if(playerTwo.b9>0){
+				resultBlue(playerTwo,playerTwo.b9,5);
+			}
+		}
+		if(droppedDice == 10){
+			if(playerOne.b10>0){
+				resultBlue(playerOne,playerOne.b10,3);
+			}
+			if(playerTwo.b10>0){
+				resultBlue(playerTwo,playerTwo.b10,3);
+			}
+		}
+		if(move==2){
+			if(droppedDice == 3){
+				if(playerOne.c3>0){
+					resultRed(playerOne,playerOne.c3,playerOne.startCard2+1,playerTwo);
+				}
+			}
+			if(droppedDice == 9){
+				if(playerOne.c9_10>0){
+					resultRed(playerOne,playerOne.c9_10,playerOne.startCard2+2,playerTwo);
+				}
+			}
+		}else if( move == 1){
+			if((droppedDice == 3)||(droppedDice == 10)){
+				if(playerTwo.c3>0){
+					resultRed(playerTwo,playerTwo.c3,playerTwo.startCard2+1,playerOne);
+				}
+			}
+			if((droppedDice == 9)||(droppedDice == 10)){
+				if(playerTwo.c9_10>0){
+					resultRed(playerTwo,playerTwo.c9_10,playerTwo.startCard2+2,playerOne);
+				}
+			}
+		}
+		updateDisplay(playerOne, moneyCountOne)
+		updateDisplay(playerTwo, moneyCountTwo)
 	}else{
 		if(move == 1){
 			if(playerOne.money>=price){
@@ -474,7 +561,6 @@ function controllerGame (nameElem,idElem){
 		}
 	}
 	}
-	
 }
 function createPromiseAll(player){
 	function createWinСondition(startCard,result){
@@ -494,5 +580,4 @@ function createPromiseAll(player){
 		alert(player.name + " победил!!!")
 	})
 }
-
 start.addEventListener("click", startGame);
