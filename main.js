@@ -255,7 +255,7 @@ function addCards(cards,i,id="img"){
 			event = event || window.event;	
 			event.preventDefault();
 		}
-		if(isMobileDevice){
+		if(!isMobileDevice()){
 			if(img.id == "img"){
 				img.addEventListener("mouseover",mouseOver)
 				img.addEventListener("mouseout",mouseOut)
