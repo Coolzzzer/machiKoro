@@ -25,6 +25,7 @@ let nameElem;
 let posBuyX = height/10;
 let posBuyY = width/8;
 let imgAll;
+let load = 0;
 const game = document.createElement("div");
 const cube1 = document.createElement("div");
 const cube2 = document.createElement("div");
@@ -103,7 +104,8 @@ function startGame(){
 	menu.style.display = "none";
 	game.style.display = "block"
 	buldGameField();
-	alert(`Ход ${playerOne.name}`);
+	controllerGame();
+	load=1;
 }
 function buldGameField(){
 	createDice(cube1);
@@ -281,12 +283,6 @@ function controllerGame (nameElem,idElem){
 	const moneyCountTwo = document.querySelector('#moneyCountTwo');
 	const playerOneRoll = document.querySelector(`#playerOneRoll`);
 	const playerTwoRoll = document.querySelector(`#playerTwoRoll`);
-	playerTwoRoll.addEventListener("click", rollDice);
-	playerOneRoll.addEventListener("click", rollDice);
-	function updateDisplay(player,moneyCount) {
-		alert(`Ход ${player.name}`)
-		moneyCount.innerHTML = `Имя: ${player.name} - Количество монет: ${player.money}`;
-	}
 	function rollDice() {
 		newFace = Math.floor(Math.random() * 6) + 1;			
 		cube1.style.transform = rotations[newFace];				
@@ -296,6 +292,16 @@ function controllerGame (nameElem,idElem){
 		}, 1000);
 		return newFace;
 	}
+	if(load == 0){
+		load = 1;
+		playerTwoRoll.addEventListener("click", rollDice);
+		playerOneRoll.addEventListener("click", rollDice);
+		hiddenTwoField.style.display = "block";
+	}else{
+	function updateDisplay(player,moneyCount) {
+		moneyCount.innerHTML = `Имя: ${player.name} - Количество монет: ${player.money}`;
+	}
+
 	function rollDice2() {
 		newFace2 = Math.floor(Math.random() * 6) + 1;		
 		cube2.style.transform = rotations[newFace2];
@@ -350,6 +356,7 @@ function controllerGame (nameElem,idElem){
 				cards[i].posYFirstBuy = 10;
 			} else if(cards[i].count == 4){
 				cards[i].posYFirstBuy = 12.5;
+				arrayCards.setAttribute("price", "buy")
 			}
 			cards[i].count++
 			let posXCard = xStartPlayer + cards[i].posXFirstBuy;
@@ -360,6 +367,9 @@ function controllerGame (nameElem,idElem){
 			console.log("move" + move + " player:" + player.name + " name:" + cards[i].name + " x:" + cards[i].posXFirstBuy + " y:" + cards[i].posYFirstBuy + " atr:"+ atr + " cards.c:"+ cards[i].count + " player.c:"+ player.count)
 			player.atr++;
 			player.count++;
+			if(cards[i].count == 4){
+				arrayCards[4].setAttribute("price", "buy")
+			}
 		}
 		function animationStandardCards(i){
 			const arrayCards = document.getElementsByName(nameElem);
@@ -436,6 +446,8 @@ function controllerGame (nameElem,idElem){
 			}
 		}
 	}
+	}
+	
 }
 function createPromiseAll(player){
 	function createWinСondition(startCard,result){
