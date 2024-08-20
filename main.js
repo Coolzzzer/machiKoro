@@ -24,7 +24,6 @@ let idElem;
 let nameElem;
 let posBuyX = height/10;
 let posBuyY = width/8;
-let load = 0;
 let imgAll;
 const game = document.createElement("div");
 const cube1 = document.createElement("div");
@@ -66,12 +65,9 @@ const startCards = [
 	{	name:"супер",price:10,src: "https://coolzzzer.github.io/machiKoro/супер-.jpg",type:0,srcBuy: "https://coolzzzer.github.io/machiKoro/супер.jpg"},
 	{	name:"парк",price:16,src: "https://coolzzzer.github.io/machiKoro/парк-.jpg",type:0,srcBuy: "https://coolzzzer.github.io/machiKoro/парк.jpg"},
 	{	name:"радио",price:22,src: "https://coolzzzer.github.io/machiKoro/радио-.jpg",type:0,srcBuy: "https://coolzzzer.github.io/machiKoro/радио.jpg"},
-	{	name: "Пропуск",price:0, type: 4, src:"https://coolzzzer.github.io/machiKoro/пропуск.png"}
+	{	name:"Пропуск",price:0, type: 4, src:"https://coolzzzer.github.io/machiKoro/пропуск.png"}
 ]
 const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
-function isMobileDevice() {
-	return /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
-}
 let playerOne = {name: "player1",money:8,count: 0,
 	startCard1:0,startCard2:0,startCard3:0,startCard4:0,
 	b1:0,b2:0,a2_3:0,c3:0,a4:0,b5:0,d6_1:0,
@@ -82,7 +78,9 @@ let playerTwo = {name: "player2",money:200,count: 0,
 	b1:0,b2:0,a2_3:0,c3:0,a4:0,b5:0,d6_1:0,
 	d6_2:0,a7:0,a8:0,b9:0,c9_10:0,b10:0,a11_12:0,
 }
-
+function isMobileDevice() {
+	return /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
+}
 function buldField(){
 	if (isMobileDevice()) {
 		if(width<height){
@@ -105,7 +103,6 @@ function startGame(){
 	menu.style.display = "none";
 	game.style.display = "block"
 	buldGameField();
-	load++;
 	alert(`Ход ${playerOne.name}`);
 }
 function buldGameField(){
@@ -221,8 +218,9 @@ playerCount = 2;
 function addCards(cards,i,id="img"){
 	const img = document.createElement('img');
 		img.setAttribute("src",cards[i].src);
-		img.setAttribute("name",cards[i].name)
-		img.setAttribute("id",id)
+		img.setAttribute("name",cards[i].name);
+		img.setAttribute("id",id);
+		img.setAttribute("price", cards[i].price)
 		img.style.width = width/17 + "px";
 		img.style.height = width/13 + "px";
 		img.style.borderRadius = width/150 + "px";
@@ -267,7 +265,12 @@ function addCards(cards,i,id="img"){
 				img.addEventListener("mousedown",mouseDown)
 			}
 		}
-
+				img.addEventListener('click', () => {
+					idElem = img.id;
+					nameElem = img.name
+					controllerGame(nameElem,idElem);
+					createPromiseAll(playerOne);
+					createPromiseAll(playerTwo);})
 	}
 buldField();
 
@@ -278,14 +281,11 @@ function controllerGame (nameElem,idElem){
 	const moneyCountTwo = document.querySelector('#moneyCountTwo');
 	const playerOneRoll = document.querySelector(`#playerOneRoll`);
 	const playerTwoRoll = document.querySelector(`#playerTwoRoll`);
-	const skipTwo = document.querySelector("skipIdplayerTwoRoll");
-	const skipOne = document.querySelector("skipIdplayerOneRoll")
 	playerTwoRoll.addEventListener("click", rollDice);
 	playerOneRoll.addEventListener("click", rollDice);
 	function updateDisplay(player,moneyCount) {
 		alert(`Ход ${player.name}`)
-		player.money -= cardsPrice;
-		moneyCount.innerHTML = `Имя: ${playerOne.name} - Количество монет: ${playerOne.money}`;
+		moneyCount.innerHTML = `Имя: ${player.name} - Количество монет: ${player.money}`;
 	}
 	function rollDice() {
 		newFace = Math.floor(Math.random() * 6) + 1;			
@@ -305,7 +305,7 @@ function controllerGame (nameElem,idElem){
 		}, 1000);
 		return newFace2;
 	}
-	function buyCards(player,xStartPlayer,hidden1Field,hidden2Field,playerRoll){
+	function buyCards(player,xStartPlayer,hidden1Field,hidden2Field,playerRoll,moneyCount){
 		function animationCards(i,atr){
 			const arrayCards = document.getElementsByName(nameElem);
 			let nextRow = 0;
@@ -361,10 +361,12 @@ function controllerGame (nameElem,idElem){
 			player.atr++;
 			player.count++;
 		}
-		function animationStandardCards(startCard){
-			console.log(player)
+		function animationStandardCards(i){
+			const arrayCards = document.getElementsByName(nameElem);
+			arrayCards[move-1].setAttribute("src", startCards[i].srcBuy);
+			arrayCards[move-1].setAttribute("price", "buy");
 		}
-		if(idElem == "img"){			
+		if(idElem == "img"){	
 			if(nameElem == "Пшеница"){
 				animationCards(1,player.b1)
 			}else if(nameElem == "Ферма"){
@@ -394,34 +396,45 @@ function controllerGame (nameElem,idElem){
 			}else if(nameElem == "Овощебаза"){
 				animationCards(14,player.a11_12)
 			}else if(nameElem == "вокзал"){
-				animationStandardCards()
+				animationStandardCards(0)
 				player.startCard1 = 1
 				playerRoll.addEventListener("click", rollDice2);
 			}else if(nameElem == "супер"){
-				animationStandardCards()
+				animationStandardCards(1)
 				player.startCard2 = 1
 			}else if(nameElem == "парк"){
-				animationStandardCards()
+				animationStandardCards(2)
 				player.startCard3 = 1
 			}else if(nameElem == "радио"){
-				animationStandardCards()
+				animationStandardCards(3)
 				player.startCard4 = 1
-			} 
-			hidden2Field.style.display = "block";
-			hidden1Field.style.display = "none";
+			}
+			updateDisplay(player,moneyCount);
 		}
-		
+		hidden2Field.style.display = "block";
+		hidden1Field.style.display = "none";
 	}
 
-	let cardsPrice = 0;
-	if(move == 1){
-		buyCards(playerOne,fieldMarking.xStartOnePlayer,hiddenTwoField,hiddenOneField,playerOneRoll);
-		updateDisplay(playerTwo,cards,moneyCountTwo)
-		move++
-	}else if(move == 2){
-		buyCards(playerTwo,fieldMarking.xStartTwoPlayer,hiddenOneField,hiddenTwoField,playerTwoRoll);
-		updateDisplay(playerOne,cards,moneyCountOne)
-		move--
+	const cardsTarget = document.getElementsByName(nameElem);
+	let price = cardsTarget[1].getAttribute("price")
+	if(price != "buy"){
+		if(move == 1){
+			if(playerOne.money>=price){
+				playerOne.money-=price;
+				buyCards(playerOne,fieldMarking.xStartOnePlayer,hiddenTwoField,hiddenOneField,playerOneRoll,moneyCountOne);
+				move++
+			}else{
+				alert("Недостаточно монет!!!")
+			}	
+		}else if(move == 2){
+			if(playerTwo.money>=price){
+				playerTwo.money-=price;
+				buyCards(playerTwo,fieldMarking.xStartTwoPlayer,hiddenOneField,hiddenTwoField,playerTwoRoll,moneyCountTwo);
+				move--
+			}else{
+				alert("Недостаточно монет!!!")
+			}
+		}
 	}
 }
 function createPromiseAll(player){
@@ -447,28 +460,4 @@ function createPromiseAll(player){
 	})
 }
 
-
-function promiseLoad(){
-	function createPromiseLoad(result){
-		return new Promise( (resolve,reject) => {
-			if (load>=1){
-				resolve(result)
-			}
-		});
-	}
-	createPromiseLoad(1).then(result =>{
-		const imgAll = document.querySelectorAll('#img');
-		imgAll.forEach(img => {
-				img.addEventListener('click', () => {
-					idElem = img.id;
-					nameElem = img.name
-					controllerGame(nameElem,idElem);
-					createPromiseAll(playerOne);
-					createPromiseAll(playerTwo);
-      });
-		});
-	})
-	load++
-}
 start.addEventListener("click", startGame);
-start.addEventListener("click", promiseLoad);
