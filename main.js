@@ -315,6 +315,23 @@ function resultRed(player,atr,profit,debter){
 		}
 	}
 }
+function resultGreen(player,atr,subAtr,profit){
+	if(atr>0){
+		player.money+=profit*atr*subAtr;
+	}
+}
+function resultPurple(player,atr,profit,debter){
+	if(atr>0){
+		let money = profit*atr;
+		if(debter.money<=money){
+			player.money+=debter.money
+			debter.money=0
+		}else if(debter.money>money){
+			player.money+=money;
+			debter.money-=money;
+		}
+	}
+}
 function controllerGame (nameElem,idElem){
 	const hiddenOneField = document.querySelector("#playerOneHiddenField");
 	const hiddenTwoField = document.querySelector("#playerTwoHiddenField");
@@ -468,7 +485,7 @@ function controllerGame (nameElem,idElem){
 	let price = cardsTarget[move-1].getAttribute("price")
 	if(price == "buy"){
 	}else if(price == "roll"){
-		droppedDice = newFace+newFace2;
+		droppedDice = newFace + newFace2;
 		setTimeout(() => {
 			alert(droppedDice)
 	}, 1000);
@@ -513,6 +530,31 @@ function controllerGame (nameElem,idElem){
 			}
 		}
 		if(move==2){
+			if((droppedDice == 2)||(droppedDice == 3)){
+				if(playerTwo.a2_3>0){
+					resultGreen(playerTwo,playerTwo.a2_3,1,playerTwo.startCard2 + 1)
+				}
+			}
+			if(droppedDice == 4){
+				if(playerTwo.a4>0){
+					resultGreen(playerTwo,playerTwo.a4,1,playerTwo.startCard2 + 3)
+				}
+			}
+			if(droppedDice == 7){
+				if(playerTwo.a7>0){
+					resultGreen(playerTwo,playerTwo.a7,playerTwo.b2,3)
+				}
+			}
+			if(droppedDice == 8){
+				if(playerTwo.a8>0){
+					resultGreen(playerTwo,playerTwo.a8,playerTwo.b5 + playerTwo.b9,3)
+				}
+			}
+			if((droppedDice == 11)||(droppedDice == 12)){
+				if(playerTwo.a11_12>0){
+					resultGreen(playerTwo,playerTwo.a11_12,playerTwo.b1 + playerTwo.b10,2)
+				}
+			}
 			if(droppedDice == 3){
 				if(playerOne.c3>0){
 					resultRed(playerOne,playerOne.c3,playerOne.startCard2+1,playerTwo);
@@ -523,8 +565,41 @@ function controllerGame (nameElem,idElem){
 					resultRed(playerOne,playerOne.c9_10,playerOne.startCard2+2,playerTwo);
 				}
 			}
+			if(droppedDice == 6){
+				if(playerTwo.d6_1>0){
+					resultRed(playerTwo,playerTwo.d6_1,2,playerOne);
+				}
+				if(playerOne.d6_2>0){
+					resultRed(playerTwo,playerTwo.d6_2,5,playerOne);
+				}
+			}
 		}else if( move == 1){
-			if((droppedDice == 3)||(droppedDice == 10)){
+			if((droppedDice == 2)||(droppedDice == 3)){
+				if(playerOne.a2_3>0){
+					resultGreen(playerOne,playerOne.a2_3,1,playerOne.startCard2 +1)
+				}
+			}
+			if(droppedDice == 4){
+				if(playerOne.a4>0){
+					resultGreen(playerOne,playerOne.a4,1,3 + playerOne.startCard2)
+				}
+			}
+			if(droppedDice == 7){
+				if(playerOne.a7>0){
+					resultGreen(playerOne,playerOne.a7,playerOne.b2,3)
+				}
+			}
+			if(droppedDice == 8){
+				if(playerOne.a8>0){
+					resultGreen(playerOne,playerOne.a8,playerOne.b5 + playerOne.b9,3)
+				}
+			}
+			if((droppedDice == 11)||(droppedDice == 12)){
+				if(playerOne.a11_12>0){
+					resultGreen(playerOne,playerOne.a11_12,playerOne.b1 + playerOne.b10,2)
+				}
+			}
+			if((droppedDice == 9)||(droppedDice == 10)){
 				if(playerTwo.c3>0){
 					resultRed(playerTwo,playerTwo.c3,playerTwo.startCard2+1,playerOne);
 				}
@@ -532,6 +607,14 @@ function controllerGame (nameElem,idElem){
 			if((droppedDice == 9)||(droppedDice == 10)){
 				if(playerTwo.c9_10>0){
 					resultRed(playerTwo,playerTwo.c9_10,playerTwo.startCard2+2,playerOne);
+				}
+			}
+			if(droppedDice == 6){
+				if(playerOne.d6_1>0){
+					resultRed(playerOne,playerOne.d6_1,2,playerTwo);
+				}
+				if(playerOne.d6_2>0){
+					resultRed(playerOne,playerOne.d6_2,5,playerTwo);
 				}
 			}
 		}
