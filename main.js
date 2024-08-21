@@ -9,7 +9,8 @@ const cube2 = document.createElement("div");
 const winWindow = document.createElement("div");
 const inputPlayerOne = document.createElement("input");
 const inputPlayerTwo = document.createElement("input");
-
+const rulesBtn = document.createElement("button");
+const rulesData = document.createElement("div");
 const winAudio=new Audio;
 winAudio.src = "https://coolzzzer.github.io/machiKoro/победа.mp3";
 const failAudio=new Audio;
@@ -21,15 +22,14 @@ buyAudio.src = "https://coolzzzer.github.io/machiKoro/покупка.mp3";
 const clickAudio=new Audio;
 clickAudio.src= "http://fe.it-academy.by/Examples/Sounds/button-16.mp3";
 
-let sd ;
 let width = window.innerWidth;
 let height = window.innerHeight;
 let size = 1.6;
 let moneyOne = 3;
 let moneyTwo = 3;
-let newFace;
+let newFace = 0;
 let newFace2 = 0;
-let droppedDice;
+let droppedDice = newFace;
 let move = 1;
 let currentFace = 1;
 let currentFace2 = 1;
@@ -46,7 +46,11 @@ let posBuyX = height/10;
 let posBuyY = width/8;
 let imgAll;
 let load = 0;
-
+let lostCardX;
+let lostCardY;
+let startXCard;
+let startYCard;
+let intervalId;
 const rotations = {
 	1: 'rotateX(0deg) rotateY(0deg)',
 	2: 'rotateX(0deg) rotateY(-90deg)',
@@ -64,20 +68,20 @@ const fieldMarking = {
 }
 const cards = [
 	{},
-	{	name:"Пшеница",price:1,src: "https://coolzzzer.github.io/machiKoro/1.jpg",type:2,value:1,view:"колос",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
-	{	name:"Ферма",price:1,src: "https://coolzzzer.github.io/machiKoro/2.jpg",type:2,value:1,view:"корова",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
-	{	name:"Пекарня",price:1,src: "https://coolzzzer.github.io/machiKoro/2-3.jpg",type:1,value:1,view:"магазин",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
-	{	name:"Кафе",price:2,src: "https://coolzzzer.github.io/machiKoro/3.jpg",type:3,value:1,view:"чаша",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
-	{	name:"Магазин",price:2,src: "https://coolzzzer.github.io/machiKoro/4.jpg",type:1,value:3,view:"магазин",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
-	{	name:"Лес",price:3,src: "https://coolzzzer.github.io/machiKoro/5.jpg",type:2,value:1,view:"шестеренка",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
-	{	name:"Стадион",price:6,src: "https://coolzzzer.github.io/machiKoro/6-стадион.jpg",type:4,value:2,view:"башня",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
-	{	name:"Телестанция",price:7,src: "https://coolzzzer.github.io/machiKoro/6-телестанция.jpg",type:4,value:5,view:"башня",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
-	{	name:"Сырзавод",price:5,src: "https://coolzzzer.github.io/machiKoro/7.jpg",type:1,value:3,view:"завод",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
-	{	name:"Мебель",price:3,src: "https://coolzzzer.github.io/machiKoro/8.jpg",type:1,value:3,view:"завод",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
-	{	name:"Шахта",price:6,src: "https://coolzzzer.github.io/machiKoro/9.jpg",type:2,value:5,view:"шестеренка",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
-	{	name:"Ресторан",price:3,src: "https://coolzzzer.github.io/machiKoro/9-10.jpg",type:3,value:2,view:"чаша",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
-	{	name:"Яблони",price:3,src: "https://coolzzzer.github.io/machiKoro/10.jpg",type:2,value:3,view:"колос",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
-	{	name:"Овощебаза",price:2,src: "https://coolzzzer.github.io/machiKoro/11-12.jpg",type:1,value:2,view:"яблоко",quantity:5,posXFirstBuy: 0,posYFirstBuy: 0,count:0}
+	{	name:"Пшеница",price:1,src: "https://coolzzzer.github.io/machiKoro/1.jpg",type:2,value:1,view:"колос",quantity:0,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Ферма",price:1,src: "https://coolzzzer.github.io/machiKoro/2.jpg",type:2,value:1,view:"корова",quantity:0,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Пекарня",price:1,src: "https://coolzzzer.github.io/machiKoro/2-3.jpg",type:1,value:1,view:"магазин",quantity:0,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Кафе",price:2,src: "https://coolzzzer.github.io/machiKoro/3.jpg",type:3,value:1,view:"чаша",quantity:0,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Магазин",price:2,src: "https://coolzzzer.github.io/machiKoro/4.jpg",type:1,value:3,view:"магазин",quantity:0,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Лес",price:3,src: "https://coolzzzer.github.io/machiKoro/5.jpg",type:2,value:1,view:"шестеренка",quantity:0,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Стадион",price:6,src: "https://coolzzzer.github.io/machiKoro/6-стадион.jpg",type:4,value:2,view:"башня",quantity:0,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Телестанция",price:7,src: "https://coolzzzer.github.io/machiKoro/6-телестанция.jpg",type:4,value:5,view:"башня",quantity:0,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Сырзавод",price:5,src: "https://coolzzzer.github.io/machiKoro/7.jpg",type:1,value:3,view:"завод",quantity:0,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Мебель",price:3,src: "https://coolzzzer.github.io/machiKoro/8.jpg",type:1,value:3,view:"завод",quantity:0,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Шахта",price:6,src: "https://coolzzzer.github.io/machiKoro/9.jpg",type:2,value:5,view:"шестеренка",quantity:0,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Ресторан",price:3,src: "https://coolzzzer.github.io/machiKoro/9-10.jpg",type:3,value:2,view:"чаша",quantity:0,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Яблони",price:3,src: "https://coolzzzer.github.io/machiKoro/10.jpg",type:2,value:3,view:"колос",quantity:0,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
+	{	name:"Овощебаза",price:2,src: "https://coolzzzer.github.io/machiKoro/11-12.jpg",type:1,value:2,view:"яблоко",quantity:0,posXFirstBuy: 0,posYFirstBuy: 0,count:0}
 ];
 const startCards = [
 	{ name:"кости",price:"roll", type: 4, src:"https://coolzzzer.github.io/machiKoro/кости.png"},
@@ -118,11 +122,13 @@ function buldField(){
 	menu.appendChild(start);
 	menu.appendChild(inputPlayerOne);
 	menu.appendChild(inputPlayerTwo);
+	menu.appendChild(rulesBtn);
 	inputPlayerOne.placeholder = playerOne.name;
 	inputPlayerTwo.placeholder = playerTwo.name;
 	game.style.display = "none";
 	start.innerHTML = "Начать";
-	
+	rulesBtn.innerHTML = "Правила";
+
 	winWindow.style.height = height + "px";
 	winWindow.style.width = width + "px";
 	winWindow.style.position = "absolute";
@@ -334,6 +340,24 @@ function sound(audio) {
 	audio.play();
 }
 buldField();
+function loadData() {
+	$.ajax("https://coolzzzer.github.io/machiKoro/rules.html",
+			{ type:'GET', dataType:'html',
+						success:dataLoaded, error:errorHandler }
+	);
+}
+function dataLoaded(data) {
+	rulesData.innerHTML=data;
+	rulesData.style.color = "indigo";
+	rulesData.style.fontSize = height/40 + "px";
+	menu.appendChild(rulesData)
+}
+function errorHandler(jqXHR,statusStr,errorStr) {
+	alert(statusStr+' '+errorStr);
+}
+
+rulesBtn.addEventListener("click", loadData)
+
 function rollDice() {
 	newFace = Math.floor(Math.random() * 6) + 1;
 	cube1.style.transform = rotations[newFace];		
@@ -388,6 +412,114 @@ function resultPurple(player,atr,profit,debter){
 		}
 	}
 }
+function rollDice2() {
+	newFace2 = Math.floor(Math.random() * 6) + 1;
+	cube2.style.transform = rotations[newFace2];		
+	setTimeout(() => {
+			cube2.style.transform = rotations[newFace2];
+			currentFace2 = newFace2;
+	}, 1000);
+	return droppedDice = newFace + newFace2;
+}
+function animationCards(player,xStartPlayer,i){
+	const arrayCards = document.getElementsByName(nameElem);
+	let nextRow = 0;
+	if(cards[i].count == 0){
+		if(player.count == 0){
+			cards[i].posXFirstBuy = 0;
+		} else if(player.count == 1){
+			cards[i].posXFirstBuy = fieldMarking.xColumn;
+		} else if(player.count == 2){
+			cards[i].posXFirstBuy = fieldMarking.xColumn*2;
+		} else if(player.count == 3){
+			cards[i].posXFirstBuy = fieldMarking.xColumn*3;
+		} else if(player.count == 4){
+			cards[i].posXFirstBuy = fieldMarking.xColumn*4;
+		} else if(player.count == 5){
+			cards[i].posXFirstBuy = fieldMarking.xColumn*5;
+		} else if(player.count == 6){
+			cards[i].posXFirstBuy = 0;
+			nextRow = fieldMarking.yRow
+		} else if(player.count == 7){
+			cards[i].posXFirstBuy = fieldMarking.xColumn;
+			nextRow = fieldMarking.yRow
+		} else if(player.count == 8){
+			cards[i].posXFirstBuy = fieldMarking.xColumn*2;
+			nextRow = fieldMarking.yRow
+		} else if(player.count == 9){
+			cards[i].posXFirstBuy = fieldMarking.xColumn*3;
+			nextRow = fieldMarking.yRow
+		} else if(player.count == 10){
+			cards[i].posXFirstBuy = fieldMarking.xColumn*4;
+			nextRow = fieldMarking.yRow
+		} else if(player.count == 11){
+			cards[i].posXFirstBuy = fieldMarking.xColumn*5;
+			nextRow = fieldMarking.yRow
+		}
+		cards[i].posYFirstBuy = 0;
+	}else	if(cards[i].count == 1){
+		player.count--;
+		cards[i].posYFirstBuy = 2.5;
+	} else if(cards[i].count == 2){
+		player.count--;
+		cards[i].posYFirstBuy = 5;
+	} else if(cards[i].count == 3){
+		player.count--;
+		cards[i].posYFirstBuy = 10;
+	} else if(cards[i].count == 4){
+		player.count--;
+		cards[i].posYFirstBuy = 12.5;
+		arrayCards[0].setAttribute("price", "buy");
+		arrayCards[1].setAttribute("price", "buy");
+		arrayCards[2].setAttribute("price", "buy");
+		arrayCards[3].setAttribute("price", "buy");
+		arrayCards[4].setAttribute("price", "buy");
+	}
+
+	cards[i].quantity++;
+	if (cards[i].quantity <= 4) {
+    startXCard = arrayCards[cards[i].quantity].offsetLeft;
+    startYCard = arrayCards[cards[i].quantity].offsetTop;
+    lostCardX = arrayCards[cards[i].quantity].offsetLeft;
+    lostCardY = arrayCards[cards[i].quantity].offsetTop;
+  } else {
+    startXCard = lostCardX;
+    startYCard = lostCardY;
+  }
+
+  let posXCard = xStartPlayer + cards[i].posXFirstBuy;
+  let posYCard = fieldMarking.yStartPlayer + cards[i].posYFirstBuy + nextRow;
+  let deltaX = posXCard - startXCard;
+  let deltaY = posYCard - startYCard;
+  let speedX = deltaX / 30;
+  let speedY = deltaY / 30;
+  if (intervalId) {
+    clearInterval(intervalId);
+  }
+
+  intervalId = setInterval(start, 10);
+
+  function start(event) {
+    event = event || window.event;
+    startXCard += speedX;
+    startYCard += speedY;
+    arrayCards[cards[i].quantity - 1].style.top = startYCard + "px";
+    arrayCards[cards[i].quantity - 1].style.left = startXCard + "px";
+    if ((Math.abs(startXCard - posXCard) < Math.abs(speedX)) && (Math.abs(startYCard - posYCard) < Math.abs(speedY))) {
+      clearInterval(intervalId);
+      arrayCards[cards[i].quantity - 1].style.top = posYCard + "px";
+      arrayCards[cards[i].quantity - 1].style.left = posXCard + "px";
+      intervalId = null;
+    }
+  }
+	cards[i].count++;
+	player.count++;
+}
+function animationStandardCards(player,xStartPlayer,i){
+	const arrayCards = document.getElementsByName(nameElem);
+	arrayCards[move-1].setAttribute("src", startCards[i].srcBuy);
+	arrayCards[move-1].setAttribute("price", "buy");
+}
 function controllerGame (nameElem,idElem){
 	const hiddenOneField = document.querySelector("#playerOneHiddenField");
 	const hiddenTwoField = document.querySelector("#playerTwoHiddenField");
@@ -395,313 +527,249 @@ function controllerGame (nameElem,idElem){
 	const moneyCountTwo = document.querySelector('#moneyCountTwo');
 	const playerOneRoll = document.querySelector(`#playerOneRoll`);
 	const playerTwoRoll = document.querySelector(`#playerTwoRoll`);
+	
 	if(load == 0){
 		load = 1;
 		hiddenTwoField.style.display = "block";
 	}else{
-	function updateDisplay(player,moneyCount) {
-		moneyCount.innerHTML = `Имя: ${player.name} - Количество монет: ${player.money}`;
-	}
-	function buyCards(player,xStartPlayer,hidden1Field,hidden2Field,playerRoll,moneyCount){
-		sound(buyAudio)
-		function animationCards(i){
-			const arrayCards = document.getElementsByName(nameElem);
-			let nextRow = 0;
-			if(cards[i].count == 0){
-				if(player.count == 0){
-					cards[i].posXFirstBuy = 0;
-				} else if(player.count == 1){
-					cards[i].posXFirstBuy = fieldMarking.xColumn;
-				} else if(player.count == 2){
-					cards[i].posXFirstBuy = fieldMarking.xColumn*2;
-				} else if(player.count == 3){
-					cards[i].posXFirstBuy = fieldMarking.xColumn*3;
-				} else if(player.count == 4){
-					cards[i].posXFirstBuy = fieldMarking.xColumn*4;
-				} else if(player.count == 5){
-					cards[i].posXFirstBuy = fieldMarking.xColumn*5;
-				} else if(player.count == 6){
-					cards[i].posXFirstBuy = 0;
-					nextRow = fieldMarking.yRow
-				} else if(player.count == 7){
-					cards[i].posXFirstBuy = fieldMarking.xColumn;
-					nextRow = fieldMarking.yRow
-				} else if(player.count == 8){
-					cards[i].posXFirstBuy = fieldMarking.xColumn*2;
-					nextRow = fieldMarking.yRow
-				} else if(player.count == 9){
-					cards[i].posXFirstBuy = fieldMarking.xColumn*3;
-					nextRow = fieldMarking.yRow
-				} else if(player.count == 10){
-					cards[i].posXFirstBuy = fieldMarking.xColumn*4;
-					nextRow = fieldMarking.yRow
-				} else if(player.count == 11){
-					cards[i].posXFirstBuy = fieldMarking.xColumn*5;
-					nextRow = fieldMarking.yRow
+		function updateDisplay(player,moneyCount) {
+			moneyCount.innerHTML = `Имя: ${player.name} - Количество монет: ${player.money}`;
+		}
+		function buyCards(player,xStartPlayer,hidden1Field,hidden2Field,playerRoll,moneyCount){
+			sound(buyAudio)
+
+			if(idElem == "img"){	
+				if(nameElem == "Пшеница"){
+					animationCards(player,xStartPlayer,1)
+					player.b1++
+				}else if(nameElem == "Ферма"){
+					animationCards(player,xStartPlayer,2)
+					player.b2++
+				}else if(nameElem == "Пекарня"){
+					animationCards(player,xStartPlayer,3)
+					player.a2_3++
+				}else if(nameElem == "Кафе"){
+					animationCards(player,xStartPlayer,4)
+					player.c3++
+				}else if(nameElem == "Магазин"){
+					animationCards(player,xStartPlayer,5)
+					player.a4++
+				}else if(nameElem == "Лес"){
+					animationCards(player,xStartPlayer,6)
+					player.b5++
+				}else if(nameElem == "Стадион"){
+					animationCards(player,xStartPlayer,7)
+					player.d6_1++
+				}else if(nameElem == "Телестанция"){
+					animationCards(player,xStartPlayer,8)
+					player.d6_2++
+				}else if(nameElem == "Сырзавод"){
+					animationCards(player,xStartPlayer,9)
+					player.a7++
+				}else if(nameElem == "Мебель"){
+					animationCards(player,xStartPlayer,10)
+					player.a8++
+				}else if(nameElem == "Шахта"){
+					animationCards(player,xStartPlayer,11)
+					player.b9++
+				}else if(nameElem == "Ресторан"){
+					animationCards(player,xStartPlayer,12)
+					player.c9_10++
+				}else if(nameElem == "Яблони"){
+					animationCards(player,xStartPlayer,13)
+					player.b10++
+				}else if(nameElem == "Овощебаза"){
+					animationCards(player,xStartPlayer,14)
+					player.a11_12++
+				}else if(nameElem == "вокзал"){
+					animationStandardCards(player,xStartPlayer,1)
+					player.startCard1 = 1;
+					playerRoll.addEventListener("click", rollDice2);			
+				}else if(nameElem == "супер"){
+					animationStandardCards(player,xStartPlayer,2)
+					player.startCard2 = 1
+				}else if(nameElem == "парк"){
+					animationStandardCards(player,xStartPlayer,3)
+					player.startCard3 = 1
+				}else if(nameElem == "радио"){
+					animationStandardCards(player,xStartPlayer,4)
+					player.startCard4 = 1
 				}
-				cards[i].posYFirstBuy = 0;
-			}else	if(cards[i].count == 1){
-				player.count--;
-				cards[i].posYFirstBuy = 2.5;
-			} else if(cards[i].count == 2){
-				player.count--;
-				cards[i].posYFirstBuy = 5;
-			} else if(cards[i].count == 3){
-				player.count--;
-				cards[i].posYFirstBuy = 10;
-			} else if(cards[i].count == 4){
-				player.count--;
-				cards[i].posYFirstBuy = 12.5;
-			}else if(cards[i].count == 5){
-				player.count--;
-				arrayCards[0].setAttribute("price", "buy");
-				arrayCards[1].setAttribute("price", "buy");
-				arrayCards[2].setAttribute("price", "buy");
-				arrayCards[3].setAttribute("price", "buy");
-				arrayCards[4].setAttribute("price", "buy");
+				updateDisplay(player,moneyCount);
 			}
-			let posXCard = xStartPlayer + cards[i].posXFirstBuy;
-			let posYCard = fieldMarking.yStartPlayer + cards[i].posYFirstBuy +nextRow;
-			arrayCards[cards[i].quantity-1].style.top = posYCard + "px";
-			arrayCards[cards[i].quantity-1].style.left = posXCard + "px";
-			cards[i].quantity--;
-			cards[i].count++;
-			player.count++;
+			hidden2Field.style.display = "block";
+			hidden1Field.style.display = "none";
 		}
-		function animationStandardCards(i){
-			const arrayCards = document.getElementsByName(nameElem);
-			arrayCards[move-1].setAttribute("src", startCards[i].srcBuy);
-			arrayCards[move-1].setAttribute("price", "buy");
-		}
-		if(idElem == "img"){	
-			if(nameElem == "Пшеница"){
-				animationCards(1)
-				player.b1++
-			}else if(nameElem == "Ферма"){
-				animationCards(2)
-				player.b2++
-			}else if(nameElem == "Пекарня"){
-				animationCards(3)
-				player.a2_3++
-			}else if(nameElem == "Кафе"){
-				animationCards(4)
-				player.c3++
-			}else if(nameElem == "Магазин"){
-				animationCards(5)
-				player.a4++
-			}else if(nameElem == "Лес"){
-				animationCards(6)
-				player.b5++
-			}else if(nameElem == "Стадион"){
-				animationCards(7)
-				player.d6_1++
-			}else if(nameElem == "Телестанция"){
-				animationCards(8)
-				player.d6_2++
-			}else if(nameElem == "Сырзавод"){
-				animationCards(9)
-				player.a7++
-			}else if(nameElem == "Мебель"){
-				animationCards(10)
-				player.a8++
-			}else if(nameElem == "Шахта"){
-				animationCards(11)
-				player.b9++
-			}else if(nameElem == "Ресторан"){
-				animationCards(12)
-				player.c9_10++
-			}else if(nameElem == "Яблони"){
-				animationCards(13)
-				player.b10++
-			}else if(nameElem == "Овощебаза"){
-				animationCards(14)
-				player.a11_12++
-			}else if(nameElem == "вокзал"){
-				animationStandardCards(1)
-				player.startCard1 = 1;
-				playerRoll.addEventListener("click", rollDice2);			
-			}else if(nameElem == "супер"){
-				animationStandardCards(2)
-				player.startCard2 = 1
-			}else if(nameElem == "парк"){
-				animationStandardCards(3)
-				player.startCard3 = 1
-			}else if(nameElem == "радио"){
-				animationStandardCards(4         )
-				player.startCard4 = 1
+		const cardsTarget = document.getElementsByName(nameElem);
+		let price = cardsTarget[move-1].getAttribute("price")
+		if(price == "buy"){
+			sound(clickAudio)
+		}else if(price == "roll"){
+			sound(rollAudio)
+			if(move == 1){
+				droppedDice = playerOne.startCard1 == 0 ? newFace : newFace + newFace2;
+			}else	if(move == 2){
+				droppedDice = playerTwo.startCard1 == 0 ? newFace : newFace + newFace2;
 			}
-			updateDisplay(player,moneyCount);
-		}
-		hidden2Field.style.display = "block";
-		hidden1Field.style.display = "none";
-	}
-	const cardsTarget = document.getElementsByName(nameElem);
-	let price = cardsTarget[move-1].getAttribute("price")
-	if(price == "buy"){
-		sound(clickAudio)
-	}else if(price == "roll"){
-		sound(rollAudio)
-		droppedDice = newFace + newFace2;
-		setTimeout(() => {
-			alert(`Число: ${droppedDice}`)
-	}, 1000);
-		if(droppedDice == 1){
-			if(playerOne.b1>0){
-				resultBlue(playerOne,playerOne.b1,1);
-			}
-			if(playerTwo.b1>0){
-				resultBlue(playerTwo,playerTwo.b1,1);
-			}
-		}
-		if(droppedDice == 2){
-			if(playerOne.b2>0){
-				resultBlue(playerOne,playerOne.b2,1);
-			}
-			if(playerTwo.b2>0){
-				resultBlue(playerTwo,playerTwo.b2,1);
-			}
-		}
-		if(droppedDice == 5){
-			if(playerOne.b5>0){
-				resultBlue(playerOne,playerOne.b5,1);
-			}
-			if(playerTwo.b5>0){
-				resultBlue(playerTwo,playerTwo.b5,1);
-			}
-		}
-		if(droppedDice == 9){
-			if(playerOne.b9>0){
-				resultBlue(playerOne,playerOne.b9,5);
-			}
-			if(playerTwo.b9>0){
-				resultBlue(playerTwo,playerTwo.b9,5);
-			}
-		}
-		if(droppedDice == 10){
-			if(playerOne.b10>0){
-				resultBlue(playerOne,playerOne.b10,3);
-			}
-			if(playerTwo.b10>0){
-				resultBlue(playerTwo,playerTwo.b10,3);
-			}
-		}
-		if(move==2){
-			if((droppedDice == 2)||(droppedDice == 3)){
-				if(playerTwo.a2_3>0){
-					resultGreen(playerTwo,playerTwo.a2_3,1,playerTwo.startCard2 + 1)
+			setTimeout(() => {
+				alert(`Число: ${droppedDice}`)
+		}, 1000);
+			if(droppedDice == 1){
+				if(playerOne.b1>0){
+					resultBlue(playerOne,playerOne.b1,1);
+				}
+				if(playerTwo.b1>0){
+					resultBlue(playerTwo,playerTwo.b1,1);
 				}
 			}
-			if(droppedDice == 4){
-				if(playerTwo.a4>0){
-					resultGreen(playerTwo,playerTwo.a4,1,playerTwo.startCard2 + 3)
+			if(droppedDice == 2){
+				if(playerOne.b2>0){
+					resultBlue(playerOne,playerOne.b2,1);
+				}
+				if(playerTwo.b2>0){
+					resultBlue(playerTwo,playerTwo.b2,1);
 				}
 			}
-			if(droppedDice == 7){
-				if(playerTwo.a7>0){
-					resultGreen(playerTwo,playerTwo.a7,playerTwo.b2,3)
+			if(droppedDice == 5){
+				if(playerOne.b5>0){
+					resultBlue(playerOne,playerOne.b5,1);
 				}
-			}
-			if(droppedDice == 8){
-				if(playerTwo.a8>0){
-					resultGreen(playerTwo,playerTwo.a8,playerTwo.b5 + playerTwo.b9,3)
-				}
-			}
-			if((droppedDice == 11)||(droppedDice == 12)){
-				if(playerTwo.a11_12>0){
-					resultGreen(playerTwo,playerTwo.a11_12,playerTwo.b1 + playerTwo.b10,2)
-				}
-			}
-			if(droppedDice == 3){
-				if(playerOne.c3>0){
-					resultRed(playerOne,playerOne.c3,playerOne.startCard2+1,playerTwo);
+				if(playerTwo.b5>0){
+					resultBlue(playerTwo,playerTwo.b5,1);
 				}
 			}
 			if(droppedDice == 9){
-				if(playerOne.c9_10>0){
-					resultRed(playerOne,playerOne.c9_10,playerOne.startCard2+2,playerTwo);
+				if(playerOne.b9>0){
+					resultBlue(playerOne,playerOne.b9,5);
+				}
+				if(playerTwo.b9>0){
+					resultBlue(playerTwo,playerTwo.b9,5);
 				}
 			}
-			if(droppedDice == 6){
-				if(playerTwo.d6_1>0){
-					resultRed(playerTwo,playerTwo.d6_1,2,playerOne);
+			if(droppedDice == 10){
+				if(playerOne.b10>0){
+					resultBlue(playerOne,playerOne.b10,3);
 				}
-				if(playerOne.d6_2>0){
-					resultRed(playerTwo,playerTwo.d6_2,5,playerOne);
-				}
-			}
-		}else if( move == 1){
-			if((droppedDice == 2)||(droppedDice == 3)){
-				if(playerOne.a2_3>0){
-					resultGreen(playerOne,playerOne.a2_3,1,playerOne.startCard2 +1)
+				if(playerTwo.b10>0){
+					resultBlue(playerTwo,playerTwo.b10,3);
 				}
 			}
-			if(droppedDice == 4){
-				if(playerOne.a4>0){
-					resultGreen(playerOne,playerOne.a4,1,3 + playerOne.startCard2)
+			if(move==2){
+				if((droppedDice == 2)||(droppedDice == 3)){
+					if(playerTwo.a2_3>0){
+						resultGreen(playerTwo,playerTwo.a2_3,1,playerTwo.startCard2 + 1)
+					}
+				}
+				if(droppedDice == 4){
+					if(playerTwo.a4>0){
+						resultGreen(playerTwo,playerTwo.a4,1,playerTwo.startCard2 + 3)
+					}
+				}
+				if(droppedDice == 7){
+					if(playerTwo.a7>0){
+						resultGreen(playerTwo,playerTwo.a7,playerTwo.b2,3)
+					}
+				}
+				if(droppedDice == 8){
+					if(playerTwo.a8>0){
+						resultGreen(playerTwo,playerTwo.a8,playerTwo.b5 + playerTwo.b9,3)
+					}
+				}
+				if((droppedDice == 11)||(droppedDice == 12)){
+					if(playerTwo.a11_12>0){
+						resultGreen(playerTwo,playerTwo.a11_12,playerTwo.b1 + playerTwo.b10,2)
+					}
+				}
+				if(droppedDice == 3){
+					if(playerOne.c3>0){
+						resultRed(playerOne,playerOne.c3,playerOne.startCard2+1,playerTwo);
+					}
+				}
+				if(droppedDice == 9){
+					if(playerOne.c9_10>0){
+						resultRed(playerOne,playerOne.c9_10,playerOne.startCard2+2,playerTwo);
+					}
+				}
+				if(droppedDice == 6){
+					if(playerTwo.d6_1>0){
+						resultRed(playerTwo,playerTwo.d6_1,2,playerOne);
+					}
+					if(playerOne.d6_2>0){
+						resultRed(playerTwo,playerTwo.d6_2,5,playerOne);
+					}
+				}
+			}else if( move == 1){
+				if((droppedDice == 2)||(droppedDice == 3)){
+					if(playerOne.a2_3>0){
+						resultGreen(playerOne,playerOne.a2_3,1,playerOne.startCard2 +1)
+					}
+				}
+				if(droppedDice == 4){
+					if(playerOne.a4>0){
+						resultGreen(playerOne,playerOne.a4,1,3 + playerOne.startCard2)
+					}
+				}
+				if(droppedDice == 7){
+					if(playerOne.a7>0){
+						resultGreen(playerOne,playerOne.a7,playerOne.b2,3)
+					}
+				}
+				if(droppedDice == 8){
+					if(playerOne.a8>0){
+						resultGreen(playerOne,playerOne.a8,playerOne.b5 + playerOne.b9,3)
+					}
+				}
+				if((droppedDice == 11)||(droppedDice == 12)){
+					if(playerOne.a11_12>0){
+						resultGreen(playerOne,playerOne.a11_12,playerOne.b1 + playerOne.b10,2)
+					}
+				}
+				if((droppedDice == 9)||(droppedDice == 10)){
+					if(playerTwo.c3>0){
+						resultRed(playerTwo,playerTwo.c3,playerTwo.startCard2+1,playerOne);
+					}
+				}
+				if((droppedDice == 9)||(droppedDice == 10)){
+					if(playerTwo.c9_10>0){
+						resultRed(playerTwo,playerTwo.c9_10,playerTwo.startCard2+2,playerOne);
+					}
+				}
+				if(droppedDice == 6){
+					if(playerOne.d6_1>0){
+						resultRed(playerOne,playerOne.d6_1,2,playerTwo);
+					}
+					if(playerOne.d6_2>0){
+						resultRed(playerOne,playerOne.d6_2,5,playerTwo);
+					}
 				}
 			}
-			if(droppedDice == 7){
-				if(playerOne.a7>0){
-					resultGreen(playerOne,playerOne.a7,playerOne.b2,3)
-				}
-			}
-			if(droppedDice == 8){
-				if(playerOne.a8>0){
-					resultGreen(playerOne,playerOne.a8,playerOne.b5 + playerOne.b9,3)
-				}
-			}
-			if((droppedDice == 11)||(droppedDice == 12)){
-				if(playerOne.a11_12>0){
-					resultGreen(playerOne,playerOne.a11_12,playerOne.b1 + playerOne.b10,2)
-				}
-			}
-			if((droppedDice == 9)||(droppedDice == 10)){
-				if(playerTwo.c3>0){
-					resultRed(playerTwo,playerTwo.c3,playerTwo.startCard2+1,playerOne);
-				}
-			}
-			if((droppedDice == 9)||(droppedDice == 10)){
-				if(playerTwo.c9_10>0){
-					resultRed(playerTwo,playerTwo.c9_10,playerTwo.startCard2+2,playerOne);
-				}
-			}
-			if(droppedDice == 6){
-				if(playerOne.d6_1>0){
-					resultRed(playerOne,playerOne.d6_1,2,playerTwo);
-				}
-				if(playerOne.d6_2>0){
-					resultRed(playerOne,playerOne.d6_2,5,playerTwo);
+			updateDisplay(playerOne, moneyCountOne)
+			updateDisplay(playerTwo, moneyCountTwo)
+		}else{
+			if(move == 1){
+				if(playerOne.money>=price){
+					playerOne.money-=price;
+					buyCards(playerOne,fieldMarking.xStartOnePlayer,hiddenTwoField,hiddenOneField,playerOneRoll,moneyCountOne);
+					move++;
+					playerOneRoll.style.display = "block";
+					playerTwoRoll.style.display = "block";
+				}else{
+					sound(failAudio)
+					alert("Недостаточно монет!!!")
+				}	
+			}else if(move == 2){
+				if(playerTwo.money>=price){
+					playerTwo.money-=price;
+					buyCards(playerTwo,fieldMarking.xStartTwoPlayer,hiddenOneField,hiddenTwoField,playerTwoRoll,moneyCountTwo);
+					move--;
+					playerOneRoll.style.display = "block";
+					playerTwoRoll.style.display = "block";
+				}else{
+					sound(failAudio)
+					alert("Недостаточно монет!!!")
 				}
 			}
 		}
-		updateDisplay(playerOne, moneyCountOne)
-		updateDisplay(playerTwo, moneyCountTwo)
-	}else{
-		
-		if(move == 1){
-			if(playerOne.money>=price){
-				playerOne.money-=price;
-				buyCards(playerOne,fieldMarking.xStartOnePlayer,hiddenTwoField,hiddenOneField,playerOneRoll,moneyCountOne);
-				move++;
-				playerOneRoll.style.display = "block";
-				playerTwoRoll.style.display = "block";
-			}else{
-				sound(failAudio)
-				alert("Недостаточно монет!!!")
-			}	
-		}else if(move == 2){
-			if(playerTwo.money>=price){
-				playerTwo.money-=price;
-				buyCards(playerTwo,fieldMarking.xStartTwoPlayer,hiddenOneField,hiddenTwoField,playerTwoRoll,moneyCountTwo);
-				move--;
-				playerOneRoll.style.display = "block";
-				playerTwoRoll.style.display = "block";
-			}else{
-				sound(failAudio)
-				alert("Недостаточно монет!!!")
-			}
-		}
-	}
 	}
 }
 function createPromiseAll(player){
