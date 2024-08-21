@@ -1,4 +1,5 @@
 "use strict";
+
 const display = document.querySelector("#display");
 const menu = document.createElement("div");
 const start = document.createElement("button");
@@ -6,8 +7,20 @@ const game = document.createElement("div");
 const cube1 = document.createElement("div");
 const cube2 = document.createElement("div");
 const winWindow = document.createElement("div");
-const inputPlayerOne = document.createElement("input")
-const inputPlayerTwo = document.createElement("input")
+const inputPlayerOne = document.createElement("input");
+const inputPlayerTwo = document.createElement("input");
+
+const winAudio=new Audio;
+winAudio.src = "https://coolzzzer.github.io/machiKoro/победа.mp3";
+const failAudio=new Audio;
+failAudio.src = "https://coolzzzer.github.io/machiKoro/провал.mp3";
+const rollAudio=new Audio;
+rollAudio.src = "https://coolzzzer.github.io/machiKoro/кубики.mp3";
+const buyAudio=new Audio;
+buyAudio.src = "https://coolzzzer.github.io/machiKoro/покупка.mp3";
+const clickAudio=new Audio;
+clickAudio.src= "http://fe.it-academy.by/Examples/Sounds/button-16.mp3";
+
 let sd ;
 let width = window.innerWidth;
 let height = window.innerHeight;
@@ -33,6 +46,7 @@ let posBuyX = height/10;
 let posBuyY = width/8;
 let imgAll;
 let load = 0;
+
 const rotations = {
 	1: 'rotateX(0deg) rotateY(0deg)',
 	2: 'rotateX(0deg) rotateY(-90deg)',
@@ -129,6 +143,11 @@ function startGame(){
 	game.style.display = "block"
 	buldGameField();
 	controllerGame();
+	soundInit(winAudio);
+	soundInit(clickAudio);
+	soundInit(failAudio);
+	soundInit(rollAudio);
+	soundInit(buyAudio);
 	load=1;
 }
 function buldGameField(){
@@ -304,7 +323,15 @@ function addCards(cards,i,id="img"){
 			controllerGame(nameElem,idElem);
 			createPromiseAll(playerOne);
 			createPromiseAll(playerTwo);})
-	}
+}
+function soundInit(audio) {
+	audio.play();
+	audio.pause();
+}
+function sound(audio) {
+	audio.currentTime=0;
+	audio.play();
+}
 buldField();
 function rollDice() {
 	newFace = Math.floor(Math.random() * 6) + 1;
@@ -367,7 +394,6 @@ function controllerGame (nameElem,idElem){
 	const moneyCountTwo = document.querySelector('#moneyCountTwo');
 	const playerOneRoll = document.querySelector(`#playerOneRoll`);
 	const playerTwoRoll = document.querySelector(`#playerTwoRoll`);
-
 	if(load == 0){
 		load = 1;
 		hiddenTwoField.style.display = "block";
@@ -376,6 +402,7 @@ function controllerGame (nameElem,idElem){
 		moneyCount.innerHTML = `Имя: ${player.name} - Количество монет: ${player.money}`;
 	}
 	function buyCards(player,xStartPlayer,hidden1Field,hidden2Field,playerRoll,moneyCount){
+		sound(buyAudio)
 		function animationCards(i){
 			const arrayCards = document.getElementsByName(nameElem);
 			let nextRow = 0;
@@ -432,7 +459,6 @@ function controllerGame (nameElem,idElem){
 				arrayCards[3].setAttribute("price", "buy");
 				arrayCards[4].setAttribute("price", "buy");
 			}
-
 			let posXCard = xStartPlayer + cards[i].posXFirstBuy;
 			let posYCard = fieldMarking.yStartPlayer + cards[i].posYFirstBuy +nextRow;
 			arrayCards[cards[i].quantity-1].style.top = posYCard + "px";
@@ -508,11 +534,12 @@ function controllerGame (nameElem,idElem){
 		hidden2Field.style.display = "block";
 		hidden1Field.style.display = "none";
 	}
-
 	const cardsTarget = document.getElementsByName(nameElem);
 	let price = cardsTarget[move-1].getAttribute("price")
 	if(price == "buy"){
+		sound(clickAudio)
 	}else if(price == "roll"){
+		sound(rollAudio)
 		droppedDice = newFace + newFace2;
 		setTimeout(() => {
 			alert(`Число: ${droppedDice}`)
@@ -649,6 +676,7 @@ function controllerGame (nameElem,idElem){
 		updateDisplay(playerOne, moneyCountOne)
 		updateDisplay(playerTwo, moneyCountTwo)
 	}else{
+		
 		if(move == 1){
 			if(playerOne.money>=price){
 				playerOne.money-=price;
@@ -657,6 +685,7 @@ function controllerGame (nameElem,idElem){
 				playerOneRoll.style.display = "block";
 				playerTwoRoll.style.display = "block";
 			}else{
+				sound(failAudio)
 				alert("Недостаточно монет!!!")
 			}	
 		}else if(move == 2){
@@ -667,6 +696,7 @@ function controllerGame (nameElem,idElem){
 				playerOneRoll.style.display = "block";
 				playerTwoRoll.style.display = "block";
 			}else{
+				sound(failAudio)
 				alert("Недостаточно монет!!!")
 			}
 		}
@@ -689,7 +719,8 @@ function createPromiseAll(player){
 	Promise.all([win1,win2,win3,win4])
 	.then(result => {
 		winWindow.style.display = "flex";
-		winWindow.innerHTML = player.name + " победил!"
+		winWindow.innerHTML = player.name + " победил!";
+		sound(winAudio)
 	})
 }
 start.addEventListener("click", startGame);
