@@ -9,7 +9,54 @@
 <body>
 	<div id="display">
 	</div>
-	
+	<script src='https://fe.it-academy.by/JQ/jquery.js'></script>
 	<script src="main.js"></script>
+		const svg = document.getElementById('fireworks');
+
+		// Функция для создания салюта
+		function createFirework(x, y) {
+				const firework = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+				firework.setAttribute("cx", x);
+				firework.setAttribute("cy", y);
+				firework.setAttribute("r", 5);
+				firework.setAttribute("fill", "white");
+				svg.appendChild(firework);
+
+				// Анимация
+				const duration = 1000;
+				const startTime = performance.now();
+
+				function animate() {
+						const currentTime = performance.now();
+						const elapsed = currentTime - startTime;
+
+						// Вычисляем новое положение
+						const progress = Math.min(elapsed / duration, 1);
+						const newY = y - (500 * progress); // Поднимаем вверх
+						const newOpacity = 1 - progress; // Уменьшаем прозрачность
+
+						firework.setAttribute("cy", newY);
+						firework.setAttribute("opacity", newOpacity);
+
+						if (progress < 1) {
+								requestAnimationFrame(animate);
+						} else {
+								svg.removeChild(firework); // Удаляем элемент после завершения анимации
+						}
+				}
+
+				animate();
+		}
+
+		// Генерация случайных координат для салюта
+		function randomFirework() {
+				const x = Math.random() * window.innerWidth;
+				const y = window.innerHeight; // Начинаем с нижней части экрана
+				createFirework(x, y);
+		}
+
+		// Запускаем салют через каждые 800 мс
+		setInterval(randomFirework, 40);
+</script>
 </body>
 </html>

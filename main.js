@@ -107,7 +107,7 @@ function buldField(){
 			alert("Для комфортной игры, переверните телефон и перезагрузите страницу")
 		}
 	}
-	display.style.backgroundColor = "green"
+	display.style.background = "url(https://coolzzzer.github.io/machiKoro/machi-koro.jpg)"
 	display.style.height = height + "px";
 	display.style.width = width + "px";
 	display.style.position = "absolute";
@@ -235,7 +235,8 @@ playerField.style.width = width/2.3 +"px";
 playerField.style.height = height - height/2.7 +"px";
 playerField.style.top = height/2.7 +"px";
 playerField.style.left = posX +"px";
-playerField.style.background = "#FFE4B5";
+playerField.style.background = "darkslategray";
+playerField.style.opacity = 0.7;
 hiddenField.setAttribute("id", playerHiddenField)
 hiddenField.style.position = "absolute"
 hiddenField.style.width = width/2.3 +"px";
