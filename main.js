@@ -833,92 +833,82 @@ function createPromiseAll(player){
 		}
 
 		function lockGetReady(callresult) {
-				if (callresult.error !== undefined) {
-						alert(callresult.error);
-				} else {
-						const newEntry = {
-								name: player.name,
-								count: countMove,
-						};
-
-						let savedData = [];
-						
-						
-						// Проверяем, есть ли ранее сохранённые данные
-						if (callresult.result !== "") {
-								try {
-										savedData = JSON.parse(callresult.result);
-										// Убедимся, что данные - это массив
-										if (!Array.isArray(savedData)) {
-												savedData = []; // Если нет, то создаем новый массив
-										}
-								} catch (e) {
-										savedData = []; // Если есть ошибка при парсинге, тоже создаем новый массив
-								}
+			if (callresult.error !== undefined) {
+					alert(callresult.error);
+			} else {
+				const newEntry = {
+					name: player.name,
+					count: countMove,
+				};
+				let savedData = [];
+				if (callresult.result !== "") {
+					try {
+						savedData = JSON.parse(callresult.result);
+						if (!Array.isArray(savedData)) {
+							savedData = []; 
 						}
-
-						savedData.push(newEntry);
-						savedData.sort((a,b)=>a.count - b.count);
-						savedData.splice(10)
-						$.ajax({
-								url: ajaxHandlerScript,
-								type: 'POST',
-								cache: false,
-								dataType: 'json',
-								data: { f: 'UPDATE', n: stringName, v: JSON.stringify(savedData), p: updatePassword },
-								success: updateReady,
-								error: errorHandler
-						});
+					} catch (e) {
+						savedData = []; 
+					}
 				}
-		}
-		function updateReady(callresult) {
-				if (callresult.error !== undefined) {
-						console.log(callresult.error);
-				} else {
-						restoreInfo(); // Восстанавливаем информацию после обновления
-				}
-		}
-		function restoreInfo() {
-			$.ajax({
+				savedData.push(newEntry);
+				savedData.sort((a,b)=>a.count - b.count);
+				savedData.splice(10)
+				$.ajax({
 					url: ajaxHandlerScript,
 					type: 'POST',
 					cache: false,
 					dataType: 'json',
-					data: { f: 'READ', n: stringName },
-					success: readReady,
+					data: { f: 'UPDATE', n: stringName, v: JSON.stringify(savedData), p: updatePassword },
+					success: updateReady,
 					error: errorHandler
+				});
+			}
+		}
+		function updateReady(callresult) {
+			if (callresult.error !== undefined) {
+				alert(callresult.error);
+			} else {
+				restoreInfo();
+			}
+		}
+		function restoreInfo() {
+			$.ajax({
+				url: ajaxHandlerScript,
+				type: 'POST',
+				cache: false,
+				dataType: 'json',
+				data: { f: 'READ', n: stringName },
+				success: readReady,
+				error: errorHandler
 			});
 		}
 		function readReady(callresult) {
-				resultArea.innerHTML = ""; // Очищаем предыдущее содержимое
-
-				if (callresult.error !== undefined) {
-						console.log(callresult.error);
-				} else if (callresult.result !== "") {
-						let savedData = [];
-						try {
-								savedData = JSON.parse(callresult.result);
-						} catch (e) {
-								alert("Ошибка при обработке сохранённых данных.");
-								return;
-						}
-						
-						if (Array.isArray(savedData)) {
-							let index = 1;
-								for (const item of savedData) {
-									resultArea.innerHTML += `${index}. ${item.name}, победи за ${item.count} ходов <br>`;
-									index++
-								}
-						} else {
-								resultArea.innerHTML += `${index}. ${savedData.name} победи за ${savedData.count} ходов <br>`;
-							}
+			resultArea.innerHTML = ""; 
+			if (callresult.error !== undefined) {
+				alert(callresult.error);
+			} else if (callresult.result !== "") {
+				let savedData = [];
+				try {
+					savedData = JSON.parse(callresult.result);
+				} catch (e) {
+					alert("Ошибка при обработке сохранённых данных.");
+					return;
 				}
+				if (Array.isArray(savedData)) {
+					let index = 1;
+						for (const item of savedData) {
+							resultArea.innerHTML += `${index}. ${item.name}, победи за ${item.count} ходов <br>`;
+							index++
+						}
+				} else {
+						resultArea.innerHTML += `${index}. ${savedData.name} победи за ${savedData.count} ходов <br>`;
+					}
+			}
 		}
-
 		function errorHandler(jqXHR, statusStr, errorStr) {
-				alert(statusStr + ' ' + errorStr);
+			alert(statusStr + ' ' + errorStr);
 		}
-
 	})
 }
 start.addEventListener("click", startGame);
