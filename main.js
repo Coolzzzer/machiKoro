@@ -30,7 +30,7 @@ let moneyOne = 3;
 let moneyTwo = 3;
 let newFace = 0;
 let newFace2 = 0;
-let droppedDice = newFace;
+let droppedDice;
 let move = 1;
 let countMove = 0;
 let currentFace = 1;
@@ -97,7 +97,7 @@ const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
 class Player {
 	constructor(){
 	this.name = "Игрок";
-	this.money = 3;
+	this.money = 333;
 	this.count = 0;
 	this.startCard1 =0;
 	this.startCard2=0;
@@ -315,8 +315,8 @@ function addCards(cards,i,id="img"){
 		function mouseOver(event){
 			event = event || window.event;
 			img.style.borderRadius = width/100 + "px";
-			img.style.width = width/5.5 + "px";
-			img.style.height = width/4 + "px";
+			img.style.width = width/10 + "px";
+			img.style.height = width/7 + "px";
 			img.style.zIndex = 10;
 		}
 		function mouseOut(event){
@@ -383,7 +383,16 @@ function rollDice() {
 	}, 1000);
 	playerOneRoll.style.display = "none";
 	playerTwoRoll.style.display = "none";
-	return newFace;
+	droppedDice = newFace;
+}
+function rollDice2() {
+	newFace2 = Math.floor(Math.random() * 6) + 1;
+	cube2.style.transform = rotations[newFace2];		
+	setTimeout(() => {
+			cube2.style.transform = rotations[newFace2];
+			currentFace2 = newFace2;
+	}, 1000);
+	droppedDice = newFace + newFace2;
 }
 function resultBlue(player,atr,profit){
 	if(atr>0){
@@ -419,15 +428,7 @@ function resultPurple(player,atr,profit,debter){
 		}
 	}
 }
-function rollDice2() {
-	newFace2 = Math.floor(Math.random() * 6) + 1;
-	cube2.style.transform = rotations[newFace2];		
-	setTimeout(() => {
-			cube2.style.transform = rotations[newFace2];
-			currentFace2 = newFace2;
-	}, 1000);
-	return newFace2;
-}
+
 function animationCards(player,xStartPlayer,i){
 	const arrayCards = document.getElementsByName(nameElem);
 	let nextRow = 0;
@@ -612,144 +613,152 @@ function controllerGame (nameElem,idElem){
 		}else if(price == "roll"){
 			sound(rollAudio)
 			if(move == 1){
-				droppedDice = playerOne.startCard1 == 0 ? newFace : newFace + newFace2;
+				if(playerOne.startCard1 == 0){
+					droppedDice = newFace
+				 } else{
+					droppedDice = newFace + newFace2
+				 }
 			}else	if(move == 2){
-				droppedDice = playerTwo.startCard1 == 0 ? newFace : newFace + newFace2;
+				if(playerTwo.startCard1 == 0){
+					droppedDice = newFace
+				 } else{
+					droppedDice = newFace + newFace2
+				 }
 			}
 			setTimeout(() => {
 				alert(`Число: ${droppedDice}`)
-		}, 1000);
-			if(droppedDice == 1){
-				if(playerOne.b1>0){
-					resultBlue(playerOne,playerOne.b1,1);
-				}
-				if(playerTwo.b1>0){
-					resultBlue(playerTwo,playerTwo.b1,1);
-				}
-			}
-			if(droppedDice == 2){
-				if(playerOne.b2>0){
-					resultBlue(playerOne,playerOne.b2,1);
-				}
-				if(playerTwo.b2>0){
-					resultBlue(playerTwo,playerTwo.b2,1);
-				}
-			}
-			if(droppedDice == 5){
-				if(playerOne.b5>0){
-					resultBlue(playerOne,playerOne.b5,1);
-				}
-				if(playerTwo.b5>0){
-					resultBlue(playerTwo,playerTwo.b5,1);
-				}
-			}
-			if(droppedDice == 9){
-				if(playerOne.b9>0){
-					resultBlue(playerOne,playerOne.b9,5);
-				}
-				if(playerTwo.b9>0){
-					resultBlue(playerTwo,playerTwo.b9,5);
-				}
-			}
-			if(droppedDice == 10){
-				if(playerOne.b10>0){
-					resultBlue(playerOne,playerOne.b10,3);
-				}
-				if(playerTwo.b10>0){
-					resultBlue(playerTwo,playerTwo.b10,3);
-				}
-			}
-			if(move==2){
-				if((droppedDice == 2)||(droppedDice == 3)){
-					if(playerTwo.a2_3>0){
-						resultGreen(playerTwo,playerTwo.a2_3,1,playerTwo.startCard2 + 1)
+				if(droppedDice == 1){
+					if(playerOne.b1>0){
+						resultBlue(playerOne,playerOne.b1,1);
+					}
+					if(playerTwo.b1>0){
+						resultBlue(playerTwo,playerTwo.b1,1);
 					}
 				}
-				if(droppedDice == 4){
-					if(playerTwo.a4>0){
-						resultGreen(playerTwo,playerTwo.a4,1,playerTwo.startCard2 + 3)
+				if(droppedDice == 2){
+					if(playerOne.b2>0){
+						resultBlue(playerOne,playerOne.b2,1);
+					}
+					if(playerTwo.b2>0){
+						resultBlue(playerTwo,playerTwo.b2,1);
 					}
 				}
-				if(droppedDice == 7){
-					if(playerTwo.a7>0){
-						resultGreen(playerTwo,playerTwo.a7,playerTwo.b2,3)
+				if(droppedDice == 5){
+					if(playerOne.b5>0){
+						resultBlue(playerOne,playerOne.b5,1);
 					}
-				}
-				if(droppedDice == 8){
-					if(playerTwo.a8>0){
-						resultGreen(playerTwo,playerTwo.a8,playerTwo.b5 + playerTwo.b9,3)
-					}
-				}
-				if((droppedDice == 11)||(droppedDice == 12)){
-					if(playerTwo.a11_12>0){
-						resultGreen(playerTwo,playerTwo.a11_12,playerTwo.b1 + playerTwo.b10,2)
-					}
-				}
-				if(droppedDice == 3){
-					if(playerOne.c3>0){
-						resultRed(playerOne,playerOne.c3,playerOne.startCard2+1,playerTwo);
+					if(playerTwo.b5>0){
+						resultBlue(playerTwo,playerTwo.b5,1);
 					}
 				}
 				if(droppedDice == 9){
-					if(playerOne.c9_10>0){
-						resultRed(playerOne,playerOne.c9_10,playerOne.startCard2+2,playerTwo);
+					if(playerOne.b9>0){
+						resultBlue(playerOne,playerOne.b9,5);
+					}
+					if(playerTwo.b9>0){
+						resultBlue(playerTwo,playerTwo.b9,5);
 					}
 				}
-				if(droppedDice == 6){
-					if(playerTwo.d6_1>0){
-						resultRed(playerTwo,playerTwo.d6_1,2,playerOne);
+				if(droppedDice == 10){
+					if(playerOne.b10>0){
+						resultBlue(playerOne,playerOne.b10,3);
 					}
-					if(playerOne.d6_2>0){
-						resultRed(playerTwo,playerTwo.d6_2,5,playerOne);
-					}
-				}
-			}else if( move == 1){
-				if((droppedDice == 2)||(droppedDice == 3)){
-					if(playerOne.a2_3>0){
-						resultGreen(playerOne,playerOne.a2_3,1,playerOne.startCard2 +1)
+					if(playerTwo.b10>0){
+						resultBlue(playerTwo,playerTwo.b10,3);
 					}
 				}
-				if(droppedDice == 4){
-					if(playerOne.a4>0){
-						resultGreen(playerOne,playerOne.a4,1,3 + playerOne.startCard2)
+				if(move==2){
+					if((droppedDice == 2)||(droppedDice == 3)){
+						if(playerTwo.a2_3>0){
+							resultGreen(playerTwo,playerTwo.a2_3,1,playerTwo.startCard2 + 1)
+						}
+					}
+					if(droppedDice == 4){
+						if(playerTwo.a4>0){
+							resultGreen(playerTwo,playerTwo.a4,1,playerTwo.startCard2 + 3)
+						}
+					}
+					if(droppedDice == 7){
+						if(playerTwo.a7>0){
+							resultGreen(playerTwo,playerTwo.a7,playerTwo.b2,3)
+						}
+					}
+					if(droppedDice == 8){
+						if(playerTwo.a8>0){
+							resultGreen(playerTwo,playerTwo.a8,playerTwo.b5 + playerTwo.b9,3)
+						}
+					}
+					if((droppedDice == 11)||(droppedDice == 12)){
+						if(playerTwo.a11_12>0){
+							resultGreen(playerTwo,playerTwo.a11_12,playerTwo.b1 + playerTwo.b10,2)
+						}
+					}
+					if(droppedDice == 3){
+						if(playerOne.c3>0){
+							resultRed(playerOne,playerOne.c3,playerOne.startCard2+1,playerTwo);
+						}
+					}
+					if(droppedDice == 9){
+						if(playerOne.c9_10>0){
+							resultRed(playerOne,playerOne.c9_10,playerOne.startCard2+2,playerTwo);
+						}
+					}
+					if(droppedDice == 6){
+						if(playerTwo.d6_1>0){
+							resultRed(playerTwo,playerTwo.d6_1,2,playerOne);
+						}
+						if(playerOne.d6_2>0){
+							resultRed(playerTwo,playerTwo.d6_2,5,playerOne);
+						}
+					}
+				}else if( move == 1){
+					if((droppedDice == 2)||(droppedDice == 3)){
+						if(playerOne.a2_3>0){
+							resultGreen(playerOne,playerOne.a2_3,1,playerOne.startCard2 +1)
+						}
+					}
+					if(droppedDice == 4){
+						if(playerOne.a4>0){
+							resultGreen(playerOne,playerOne.a4,1,3 + playerOne.startCard2)
+						}
+					}
+					if(droppedDice == 7){
+						if(playerOne.a7>0){
+							resultGreen(playerOne,playerOne.a7,playerOne.b2,3)
+						}
+					}
+					if(droppedDice == 8){
+						if(playerOne.a8>0){
+							resultGreen(playerOne,playerOne.a8,playerOne.b5 + playerOne.b9,3)
+						}
+					}
+					if((droppedDice == 11)||(droppedDice == 12)){
+						if(playerOne.a11_12>0){
+							resultGreen(playerOne,playerOne.a11_12,playerOne.b1 + playerOne.b10,2)
+						}
+					}
+					if((droppedDice == 9)||(droppedDice == 10)){
+						if(playerTwo.c3>0){
+							resultRed(playerTwo,playerTwo.c3,playerTwo.startCard2+1,playerOne);
+						}
+					}
+					if((droppedDice == 9)||(droppedDice == 10)){
+						if(playerTwo.c9_10>0){
+							resultRed(playerTwo,playerTwo.c9_10,playerTwo.startCard2+2,playerOne);
+						}
+					}
+					if(droppedDice == 6){
+						if(playerOne.d6_1>0){
+							resultRed(playerOne,playerOne.d6_1,2,playerTwo);
+						}
+						if(playerOne.d6_2>0){
+							resultRed(playerOne,playerOne.d6_2,5,playerTwo);
+						}
 					}
 				}
-				if(droppedDice == 7){
-					if(playerOne.a7>0){
-						resultGreen(playerOne,playerOne.a7,playerOne.b2,3)
-					}
-				}
-				if(droppedDice == 8){
-					if(playerOne.a8>0){
-						resultGreen(playerOne,playerOne.a8,playerOne.b5 + playerOne.b9,3)
-					}
-				}
-				if((droppedDice == 11)||(droppedDice == 12)){
-					if(playerOne.a11_12>0){
-						resultGreen(playerOne,playerOne.a11_12,playerOne.b1 + playerOne.b10,2)
-					}
-				}
-				if((droppedDice == 9)||(droppedDice == 10)){
-					if(playerTwo.c3>0){
-						resultRed(playerTwo,playerTwo.c3,playerTwo.startCard2+1,playerOne);
-					}
-				}
-				if((droppedDice == 9)||(droppedDice == 10)){
-					if(playerTwo.c9_10>0){
-						resultRed(playerTwo,playerTwo.c9_10,playerTwo.startCard2+2,playerOne);
-					}
-				}
-				if(droppedDice == 6){
-					if(playerOne.d6_1>0){
-						resultRed(playerOne,playerOne.d6_1,2,playerTwo);
-					}
-					if(playerOne.d6_2>0){
-						resultRed(playerOne,playerOne.d6_2,5,playerTwo);
-					}
-				}
-			}
-			updateDisplay(playerOne, moneyCountOne)
-			updateDisplay(playerTwo, moneyCountTwo)
+				updateDisplay(playerOne, moneyCountOne)
+				updateDisplay(playerTwo, moneyCountTwo)
+			}, 1000);
 		}else{
 			if(move == 1){
 				if(playerOne.money>=price){
