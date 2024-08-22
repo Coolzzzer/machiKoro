@@ -385,15 +385,6 @@ function rollDice() {
 	playerTwoRoll.style.display = "none";
 	return newFace;
 }
-function rollDice2() {
-	newFace2 = Math.floor(Math.random() * 6) + 1;
-	cube2.style.transform = rotations[newFace2];		
-	setTimeout(() => {
-			cube2.style.transform = rotations[newFace2];
-			currentFace2 = newFace2;
-	}, 1000);
-	return newFace2;
-}
 function resultBlue(player,atr,profit){
 	if(atr>0){
 		player.money+=profit*atr;
@@ -905,11 +896,4 @@ function createPromiseAll(player){
 buldField();
 rulesBtn.addEventListener("click", loadData)
 start.addEventListener("click", startGame);
-
-
-
-
-
-
-
 
