@@ -119,8 +119,8 @@ class Player {
 	this.a11_12=0;
 	}
 }
-const playerOne = new Player;
-const playerTwo = new Player;
+ let playerOne = new Player;
+ let playerTwo = new Player;
 function isMobileDevice() {
 	return /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
 }
@@ -359,7 +359,6 @@ function sound(audio) {
 	audio.currentTime=0;
 	audio.play();
 }
-buldField();
 function loadData() {
 	$.ajax("https://coolzzzer.github.io/machiKoro/rules.html",
 			{ type:'GET', dataType:'html',
@@ -375,9 +374,6 @@ function dataLoaded(data) {
 function errorHandler(jqXHR,statusStr,errorStr) {
 	alert(statusStr+' '+errorStr);
 }
-
-rulesBtn.addEventListener("click", loadData)
-
 function rollDice() {
 	newFace = Math.floor(Math.random() * 6) + 1;
 	cube1.style.transform = rotations[newFace];		
@@ -813,7 +809,7 @@ function createPromiseAll(player){
 		winWindow.appendChild(resultArea);
 		const ajaxHandlerScript = "https://fe.it-academy.by/AjaxStringStorage2.php";
 		let updatePassword;
-		const stringName = 'Zhuk_machiKoro_main';
+		const stringName = 'Zhuk_machiKoro_Main';
 		storeInfo();
 		function storeInfo() {
 				updatePassword = Math.random();
@@ -906,6 +902,8 @@ function createPromiseAll(player){
 		}
 	})
 }
+buldField();
+rulesBtn.addEventListener("click", loadData)
 start.addEventListener("click", startGame);
 
 
