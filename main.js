@@ -85,6 +85,7 @@ const cards = [
 	{	name:"Яблони",price:3,src: "https://coolzzzer.github.io/machiKoro/10.jpg",type:2,value:3,view:"колос",quantity:0,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
 	{	name:"Овощебаза",price:2,src: "https://coolzzzer.github.io/machiKoro/11-12.jpg",type:1,value:2,view:"яблоко",quantity:0,posXFirstBuy: 0,posYFirstBuy: 0,count:0}
 ];
+
 const startCards = [
 	{ name:"кости",price:"roll", type: 4, src:"https://coolzzzer.github.io/machiKoro/кости.png"},
 	{	name:"вокзал",price:4,src: "https://coolzzzer.github.io/machiKoro/вокзал-.jpg",type:0,srcBuy: "https://coolzzzer.github.io/machiKoro/вокзал.jpg"},
@@ -94,16 +95,35 @@ const startCards = [
 	{	name:"Пропуск",price:0, type: 4, src:"https://coolzzzer.github.io/machiKoro/пропуск.png"}
 ]
 const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
-let playerOne = {name: "Игрок 1",money:8,count: 0,
-	startCard1:0,startCard2:0,startCard3:0,startCard4:0,
-	b1:0,b2:0,a2_3:0,c3:0,a4:0,b5:0,d6_1:0,
-	d6_2:0,a7:0,a8:0,b9:0,c9_10:0,b10:0,a11_12:0,
+class Player {
+	constructor(){
+	this.name = "Игрок";
+	this.money = 3;
+	this.count = 0;
+	this.startCard1 =0;
+	this.startCard2=0;
+	this.startCard3=0;
+	this.startCard4=0;
+	this.b1=0;
+	this.b2=0;
+	this.a2_3=0;
+	this.c3=0;
+	this.a4=0;
+	this.b5=0;
+	this.d6_1=0;
+	this.d6_2=0;
+	this.a7=0;
+	this.a8=0;
+	this.b9=0;
+	this.c9_10=0;
+	this.b10=0;
+	this.a11_12=0;
+	}
 }
-let playerTwo = {name: "Игрок 2",money:200,count: 0,
-	startCard1:0,startCard2:0,startCard3:0,startCard4:0,
-	b1:0,b2:0,a2_3:0,c3:0,a4:0,b5:0,d6_1:0,
-	d6_2:0,a7:0,a8:0,b9:0,c9_10:0,b10:0,a11_12:0,
-}
+let playerOne = new Player;
+let playerTwo = new Player;
+playerOne.name = "Игрок 1";
+playerTwo.name = "Игрок 2"
 function isMobileDevice() {
 	return /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
 }
@@ -795,7 +815,7 @@ function createPromiseAll(player){
 		winWindow.appendChild(resultArea);
 		const ajaxHandlerScript = "https://fe.it-academy.by/AjaxStringStorage2.php";
 		let updatePassword;
-		const stringName = 'Zhuk_machikoro_test3';
+		const stringName = 'Zhuk_machiKoro_main';
 		
 		storeInfo();
 
