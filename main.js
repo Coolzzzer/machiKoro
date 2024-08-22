@@ -11,6 +11,7 @@ const inputPlayerOne = document.createElement("input");
 const inputPlayerTwo = document.createElement("input");
 const rulesBtn = document.createElement("button");
 const rulesData = document.createElement("div");
+const resultArea = document.createElement("div");
 const winAudio=new Audio;
 winAudio.src = "https://coolzzzer.github.io/machiKoro/победа.mp3";
 const failAudio=new Audio;
@@ -31,6 +32,7 @@ let newFace = 0;
 let newFace2 = 0;
 let droppedDice = newFace;
 let move = 1;
+let countMove = 0;
 let currentFace = 1;
 let currentFace2 = 1;
 let playerCount = 1;
@@ -134,9 +136,9 @@ function buldField(){
 	winWindow.style.position = "absolute";
 	winWindow.style.left = 0;
 	winWindow.style.top = 0;
-	winWindow.style.opacity = 0.5;
+	winWindow.style.opacity = 0.8;
 	winWindow.style.backgroundColor = "white";
-	winWindow.style.fontSize = width/8 + "px";
+	winWindow.style.fontSize = width/25 + "px";
 	winWindow.style.zIndex = 15;
 	winWindow.style.justifyContent = "center";
 	winWindow.style.alignItems = "center";
@@ -496,9 +498,7 @@ function animationCards(player,xStartPlayer,i){
   if (intervalId) {
     clearInterval(intervalId);
   }
-
   intervalId = setInterval(start, 10);
-
   function start(event) {
     event = event || window.event;
     startXCard += speedX;
@@ -751,6 +751,7 @@ function controllerGame (nameElem,idElem){
 					playerOne.money-=price;
 					buyCards(playerOne,fieldMarking.xStartOnePlayer,hiddenTwoField,hiddenOneField,playerOneRoll,moneyCountOne);
 					move++;
+					countMove++;
 					playerOneRoll.style.display = "block";
 					playerTwoRoll.style.display = "block";
 				}else{
@@ -762,6 +763,7 @@ function controllerGame (nameElem,idElem){
 					playerTwo.money-=price;
 					buyCards(playerTwo,fieldMarking.xStartTwoPlayer,hiddenOneField,hiddenTwoField,playerTwoRoll,moneyCountTwo);
 					move--;
+					countMove++;
 					playerOneRoll.style.display = "block";
 					playerTwoRoll.style.display = "block";
 				}else{
@@ -787,9 +789,124 @@ function createPromiseAll(player){
 	const win4 = createWinСondition(player.startCard4,4);
 	Promise.all([win1,win2,win3,win4])
 	.then(result => {
-		winWindow.style.display = "flex";
-		winWindow.innerHTML = player.name + " победил!";
-		sound(winAudio)
+		sound(winAudio);
+		winWindow.style.display = "block"
+		winWindow.innerHTML = `${player.name} победил за ${countMove} ходов!<br><br>` ;
+		winWindow.appendChild(resultArea);
+		const ajaxHandlerScript = "https://fe.it-academy.by/AjaxStringStorage2.php";
+		let updatePassword;
+		const stringName = 'Zhuk_machikoro_test3';
+		
+		storeInfo();
+
+		function storeInfo() {
+				updatePassword = Math.random();
+				$.ajax({
+						url: ajaxHandlerScript,
+						type: 'POST',
+						cache: false,
+						dataType: 'json',
+						data: { f: 'LOCKGET', n: stringName, p: updatePassword },
+						success: lockGetReady,
+						error: errorHandler
+				});
+		}
+
+		function lockGetReady(callresult) {
+				if (callresult.error !== undefined) {
+						alert(callresult.error);
+				} else {
+						const newEntry = {
+								name: player.name,
+								count: countMove,
+						};
+
+						let savedData = [];
+						
+						
+						// Проверяем, есть ли ранее сохранённые данные
+						if (callresult.result !== "") {
+								try {
+										savedData = JSON.parse(callresult.result);
+										// Убедимся, что данные - это массив
+										if (!Array.isArray(savedData)) {
+												savedData = []; // Если нет, то создаем новый массив
+										}
+								} catch (e) {
+										savedData = []; // Если есть ошибка при парсинге, тоже создаем новый массив
+								}
+						}
+
+						savedData.push(newEntry);
+						savedData.sort((a,b)=>a.count - b.count);
+						savedData.splice(10)
+						$.ajax({
+								url: ajaxHandlerScript,
+								type: 'POST',
+								cache: false,
+								dataType: 'json',
+								data: { f: 'UPDATE', n: stringName, v: JSON.stringify(savedData), p: updatePassword },
+								success: updateReady,
+								error: errorHandler
+						});
+				}
+		}
+		function updateReady(callresult) {
+				if (callresult.error !== undefined) {
+						console.log(callresult.error);
+				} else {
+						restoreInfo(); // Восстанавливаем информацию после обновления
+				}
+		}
+		function restoreInfo() {
+			$.ajax({
+					url: ajaxHandlerScript,
+					type: 'POST',
+					cache: false,
+					dataType: 'json',
+					data: { f: 'READ', n: stringName },
+					success: readReady,
+					error: errorHandler
+			});
+		}
+		function readReady(callresult) {
+				resultArea.innerHTML = ""; // Очищаем предыдущее содержимое
+
+				if (callresult.error !== undefined) {
+						console.log(callresult.error);
+				} else if (callresult.result !== "") {
+						let savedData = [];
+						try {
+								savedData = JSON.parse(callresult.result);
+						} catch (e) {
+								alert("Ошибка при обработке сохранённых данных.");
+								return;
+						}
+						
+						if (Array.isArray(savedData)) {
+							let index = 1;
+								for (const item of savedData) {
+									resultArea.innerHTML += `${index}. ${item.name}, победи за ${item.count} ходов <br>`;
+									index++
+								}
+						} else {
+								resultArea.innerHTML += `${index}. ${savedData.name} победи за ${savedData.count} ходов <br>`;
+							}
+				}
+		}
+
+		function errorHandler(jqXHR, statusStr, errorStr) {
+				alert(statusStr + ' ' + errorStr);
+		}
+
 	})
 }
 start.addEventListener("click", startGame);
+
+
+
+
+
+
+
+
