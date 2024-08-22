@@ -426,7 +426,7 @@ function rollDice2() {
 			cube2.style.transform = rotations[newFace2];
 			currentFace2 = newFace2;
 	}, 1000);
-	return droppedDice = newFace + newFace2;
+	return newFace2;
 }
 function animationCards(player,xStartPlayer,i){
 	const arrayCards = document.getElementsByName(nameElem);
