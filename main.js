@@ -85,7 +85,6 @@ const cards = [
 	{	name:"Яблони",price:3,src: "https://coolzzzer.github.io/machiKoro/10.jpg",type:2,value:3,view:"колос",quantity:0,posXFirstBuy: 0,posYFirstBuy: 0,count:0},
 	{	name:"Овощебаза",price:2,src: "https://coolzzzer.github.io/machiKoro/11-12.jpg",type:1,value:2,view:"яблоко",quantity:0,posXFirstBuy: 0,posYFirstBuy: 0,count:0}
 ];
-
 const startCards = [
 	{ name:"кости",price:"roll", type: 4, src:"https://coolzzzer.github.io/machiKoro/кости.png"},
 	{	name:"вокзал",price:4,src: "https://coolzzzer.github.io/machiKoro/вокзал-.jpg",type:0,srcBuy: "https://coolzzzer.github.io/machiKoro/вокзал.jpg"},
@@ -120,10 +119,8 @@ class Player {
 	this.a11_12=0;
 	}
 }
-let playerOne = new Player;
-let playerTwo = new Player;
-playerOne.name = "Игрок 1";
-playerTwo.name = "Игрок 2"
+const playerOne = new Player;
+const playerTwo = new Player;
 function isMobileDevice() {
 	return /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
 }
@@ -145,12 +142,13 @@ function buldField(){
 	menu.appendChild(inputPlayerOne);
 	menu.appendChild(inputPlayerTwo);
 	menu.appendChild(rulesBtn);
+	playerOne.name = "Игрок 1";
+	playerTwo.name = "Игрок 2";
 	inputPlayerOne.placeholder = playerOne.name;
 	inputPlayerTwo.placeholder = playerTwo.name;
 	game.style.display = "none";
 	start.innerHTML = "Начать";
 	rulesBtn.innerHTML = "Правила";
-
 	winWindow.style.height = height + "px";
 	winWindow.style.width = width + "px";
 	winWindow.style.position = "absolute";
@@ -816,9 +814,7 @@ function createPromiseAll(player){
 		const ajaxHandlerScript = "https://fe.it-academy.by/AjaxStringStorage2.php";
 		let updatePassword;
 		const stringName = 'Zhuk_machiKoro_main';
-		
 		storeInfo();
-
 		function storeInfo() {
 				updatePassword = Math.random();
 				$.ajax({
@@ -831,7 +827,6 @@ function createPromiseAll(player){
 						error: errorHandler
 				});
 		}
-
 		function lockGetReady(callresult) {
 			if (callresult.error !== undefined) {
 					alert(callresult.error);
