@@ -97,7 +97,7 @@ const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
 class Player {
 	constructor(){
 	this.name = "Игрок";
-	this.money = 333;
+	this.money = 3;
 	this.count = 0;
 	this.startCard1 =0;
 	this.startCard2=0;
